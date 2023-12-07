@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#DEC3A9"
+    tools:context=".View.CusHomeFragment">
+
+    <TextView
+        android:id="@+id/textView4"
+        android:layout_width="97dp"
+        android:layout_height="37dp"
+        android:layout_marginTop="60dp"
+        android:text="Welcome,"
+        android:textColor="@color/Yellow"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.254"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txtSearch"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <EditText
+        android:id="@+id/txtSearch"
+        android:layout_width="270dp"
+        android:layout_height="46dp"
+        android:layout_marginEnd="20dp"
+        android:background="@drawable/trans_round_stroke"
+        android:ems="10"
+        android:focusableInTouchMode="false"
+        android:hint="Search"
+        android:inputType="text"
+        android:paddingStart="50dp"
+        android:textColorHint="#D6C6BD"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.174" />
+
+    <ImageView
+        android:id="@+id/imageView4"
+        android:layout_width="44dp"
+        android:layout_height="47dp"
+        android:layout_marginBottom="15dp"
+        android:src="@drawable/search"
+        app:layout_constraintBottom_toBottomOf="@+id/txtSearch"
+        app:layout_constraintEnd_toEndOf="@+id/txtSearch"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/txtSearch"
+        app:layout_constraintTop_toTopOf="@+id/txtSearch"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <TextView
+        android:id="@+id/txtUserName"
+        android:layout_width="133dp"
+        android:layout_height="26dp"
+        android:layout_marginTop="92dp"
+        android:fontFamily="@font/architects_daughter"
+        android:textColor="#432817"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.435"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <FrameLayout
+        android:id="@+id/fragmentContainer"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="#f55555"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txtSearch" />
+
+
+
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="36dp"
+        android:layout_height="27dp"
+        android:src="@drawable/cart"
+        app:layout_constraintBottom_toTopOf="@+id/txtSearch"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.9"
+        app:layout_constraintStart_toEndOf="@+id/textView4"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.618" />
+
+    <TextView
+        android:id="@+id/txtCart"
+        android:layout_width="13dp"
+        android:layout_height="16dp"
+        android:hint="cart"
+        android:text="1"
+        android:textColor="#151515"
+        android:textColorHint="#090909"
+        app:layout_constraintBottom_toBottomOf="@+id/imageView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.927"
+        app:layout_constraintStart_toEndOf="@+id/textView4"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.647" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

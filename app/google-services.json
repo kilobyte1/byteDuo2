@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "385452102416",
+    "project_id": "byteduo-df87d",
+    "storage_bucket": "byteduo-df87d.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:385452102416:android:8f097112739b0bbcef8b95",
+        "android_client_info": {
+          "package_name": "com.example.byteduo"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBiCBbqfLr7RacP79LmYrcXusJVPyjOFgQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
