@@ -50,6 +50,7 @@ dependencies {
     implementation("com.google.firebase:firebase-database:20.3.0")
     implementation("com.google.firebase:firebase-storage-common:17.0.0")
     implementation("com.google.firebase:firebase-database-ktx:20.3.0")
+    implementation("androidx.recyclerview:recyclerview:1.3.2")
 
 
 
@@ -71,5 +72,12 @@ dependencies {
     implementation ("at.favre.lib:bcrypt:0.9.0")
     //in use
     implementation ("org.mindrot:jbcrypt:0.4")
+
+    //glide to round the images
+
+    implementation ("com.github.bumptech.glide:glide:4.16.0")
+
+    implementation ("androidx.recyclerview:recyclerview:1.2.1")
+
 
 }

@@ -9,8 +9,15 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
+import android.widget.ListView
 import android.widget.TextView
 import com.example.byteduo.R
+import com.example.byteduo.View.items.BakeryFragment
+import com.example.byteduo.View.items.DrinksFragment
+import com.example.byteduo.View.items.HotCoffeeFragment
+import com.example.byteduo.View.items.HotTeasFragment
+import com.example.byteduo.View.items.IceTeasFragment
+import com.example.byteduo.adapter.MenuAdapter
 import com.example.byteduo.model.Customer
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
@@ -23,15 +30,17 @@ import com.google.firebase.database.ValueEventListener
 private const val ARG_PARAM1 = "param1"
 private const val ARG_PARAM2 = "param2"
 
-/**
- * A simple [Fragment] subclass.
- * Use the [CusHomeFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class CusHomeFragment : Fragment() {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
+
+    private lateinit var menuListView: ListView
+    private lateinit var menuAdapter: MenuAdapter
+
+    private val menuItems = listOf("Hot Coffee","Ice Teas","Hot Teas", "Bakery", "Drinks")
+    private val fragments = listOf(HotCoffeeFragment(), IceTeasFragment(), HotTeasFragment(), BakeryFragment(), DrinksFragment())
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -40,8 +49,6 @@ class CusHomeFragment : Fragment() {
             param1 = it.getString(ARG_PARAM1)
             param2 = it.getString(ARG_PARAM2)
         }
-
-
     }
 
     override fun onCreateView(
@@ -53,14 +60,41 @@ class CusHomeFragment : Fragment() {
 
         // Initialization code
         val userName = view.findViewById<TextView>(R.id.txtUserName)
+        val searchBar = view.findViewById<EditText>(R.id.txtSearch)
 
-        val editText = view.findViewById<EditText>(R.id.txtSearch)
+        //get the listview on the xml // ready to contain the various fragments
+        menuListView = view.findViewById(R.id.menuListView)
+        menuAdapter = MenuAdapter(requireActivity(), menuItems)
+        menuListView.adapter = menuAdapter
+
+        // Item click listener
+        menuListView.setOnItemClickListener { _, _, position, _ ->
+            //replace fragment
+            onMenuItemClicked(position)
+        }
+
+
+        // Create an instance of MenuAdapter
+        menuAdapter = MenuAdapter(requireActivity(), menuItems)
+        menuListView.adapter = menuAdapter
+
+        // Get the default fragment position
+        val defaultPosition = menuAdapter.getDefaultFragmentPosition()
+
+        // Replace the fragment container with the default fragment
+        onMenuItemClicked(defaultPosition)
+
+        // Set the selected position in the menu adapter
+        menuAdapter.setSelectedPosition(defaultPosition)
+
+
+
 
         // Set an OnClickListener to enable focus when search is clicked
-        editText.setOnClickListener { editText.isFocusableInTouchMode = true
-            editText.requestFocus()
+        searchBar.setOnClickListener { searchBar.isFocusableInTouchMode = true
+            searchBar.requestFocus()
             val imm = requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-            imm.showSoftInput(editText, InputMethodManager.SHOW_IMPLICIT)
+            imm.showSoftInput(searchBar, InputMethodManager.SHOW_IMPLICIT)
         }
 
         val userId = FirebaseAuth.getInstance().currentUser?.uid
@@ -85,14 +119,26 @@ class CusHomeFragment : Fragment() {
                     }
                 }
 
-
                 override fun onCancelled(error: DatabaseError) {
                     // Handle the error
                 }
             })
         }
+
+
         return view
     }
+
+    // Replace the fragment container with the selected fragment
+    private fun onMenuItemClicked(position: Int) {
+
+        requireActivity().supportFragmentManager.beginTransaction()
+            .replace(R.id.fragmentContainer, fragments[position])
+            .commit()
+
+        menuAdapter.setSelectedPosition(position)
+    }
+
 
 
     companion object {
