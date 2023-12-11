@@ -6,10 +6,13 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.byteduo.R
 import com.example.byteduo.adapter.MenuItemsAdapter
+import com.example.byteduo.model.CartItem
+import com.example.byteduo.model.FirebaseDBManager
 import com.example.byteduo.model.MenuItems
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -42,7 +45,14 @@ class HotCoffeeFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_bakery, container, false)
         recyclerView = view.findViewById(R.id.recyclerView)
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
-        adapter = MenuItemsAdapter()
+        adapter = MenuItemsAdapter ({ menuItem,itemCount ->
+            // Handle the "Add" button click here
+            handleAddToCart(menuItem, itemCount)
+        },
+        onUpdateCartListener = {
+            // Handle cart update here if needed
+        }
+        )
         recyclerView.adapter = adapter
 
         Log.d("Drink", "we got here")
@@ -77,23 +87,32 @@ class HotCoffeeFragment : Fragment() {
         })
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment HotCoffeeFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            HotCoffeeFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
-            }
+    // Handle the "Add" button click by creating a CartItem and storing it in the database
+    private fun handleAddToCart(menuItem: MenuItems,quantity: Int) {
+        if (quantity > 0) {
+            // Create a CartItem object with the necessary details
+            val cartItem = CartItem(
+                menuItem = menuItem,
+                quantity = quantity,
+            )
+
+            // Store the cartItem in the database or perform other actions as needed
+            storeCartItemInDatabase(cartItem)
+            Toast.makeText(requireContext(), "Item added", Toast.LENGTH_SHORT).show()
+
+        } else {
+            // Show a toast message if quantity is zero
+            Toast.makeText(requireContext(), "Quantity cannot be 0", Toast.LENGTH_SHORT).show()
+        }
+    }
+    private fun storeCartItemInDatabase(cartItem: CartItem) {
+
+        val userId = FirebaseDBManager.getCurrentUserId()
+
+        if (userId != null) {
+            databaseReference = FirebaseDatabase.getInstance().getReference("Cart").child(userId)
+
+            databaseReference.push().setValue(cartItem)
+        }
     }
 }

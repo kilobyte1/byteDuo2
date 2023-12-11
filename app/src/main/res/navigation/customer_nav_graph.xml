@@ -20,4 +20,9 @@
         android:name="com.example.byteduo.View.OrderFragment"
         android:label="fragment_order"
         tools:layout="@layout/fragment_order" />
+    <fragment
+        android:id="@+id/cartFragment2"
+        android:name="com.example.byteduo.CartFragment"
+        android:label="fragment_cart"
+        tools:layout="@layout/fragment_cart" />
 </navigation>

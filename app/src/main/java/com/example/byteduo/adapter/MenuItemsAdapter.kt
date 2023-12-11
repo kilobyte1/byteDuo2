@@ -13,8 +13,10 @@ import com.bumptech.glide.Glide
 import com.example.byteduo.R
 import com.example.byteduo.model.MenuItems
 
-class MenuItemsAdapter : RecyclerView.Adapter<MenuItemsAdapter.ViewHolder>() {
-
+class MenuItemsAdapter(
+    private val onAddClickListener: (MenuItems, itemCount: Int) -> Unit,
+    private val onUpdateCartListener: () -> Unit
+) : RecyclerView.Adapter<MenuItemsAdapter.ViewHolder>() {
     private var items: List<MenuItems> = listOf()
     //add btn
 
@@ -25,44 +27,57 @@ class MenuItemsAdapter : RecyclerView.Adapter<MenuItemsAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.activity_menu_item_view, parent, false)
-        return ViewHolder(view)
+        return ViewHolder(view, items, onAddClickListener, onUpdateCartListener)
+
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val menuItem = items[position]
         holder.bind(menuItem)
+
+        // Set click listener for the btnAdd
+        holder.btnAdd.setOnClickListener {
+            onAddClickListener.invoke(menuItem, holder.getItemCount())
+        }
     }
 
     override fun getItemCount(): Int {
         return items.size
     }
 
-    class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    class ViewHolder(itemView: View, private val items: List<MenuItems>,
+                     private val onAddClickListener: (MenuItems, itemCount: Int) -> Unit,
+                     private val onUpdateCartListener: () -> Unit) : RecyclerView.ViewHolder(itemView) {
+
+
         private val itemNameTextView: TextView = itemView.findViewById(R.id.itemNameTextView)
         private val itemPriceTextView: TextView = itemView.findViewById(R.id.itemPriceTextView)
         private val itemImageView: ImageView =  itemView.findViewById(R.id.itemImageView)
         private val itemDescription: TextView = itemView.findViewById(R.id.itemDescriptionTextView)
 
         //btn add
-        private val btnAdd: Button = itemView.findViewById(R.id.btnAdd)
+        val btnAdd: Button = itemView.findViewById(R.id.btnAdd)
         private val btnInc: Button = itemView.findViewById(R.id.incBtn)
         private val btnDec: Button = itemView.findViewById(R.id.decBtn)
         private val counter: TextView = itemView.findViewById(R.id.counter)
 
         private var itemCount: Int = 0
 
-
+        //expose the item count
+        fun getItemCount(): Int {
+            return itemCount
+        }
 
         init {
             // Set click listener for the btnAdd
             btnAdd.setOnClickListener {
-                //ToDo
-                //create a new activity and when the user click on a menu item, they are directed to it to set the quantity
-                //on thet activity, the user can add to cart and this should update the cart
-                //val intent = Intent(itemView.context, YourTargetActivity::class.java)
-                //itemView.context.startActivity(intent)
+                onAddClickListener.invoke(items[adapterPosition], itemCount)
+                onUpdateCartListener.invoke()
             }
-            //the add and dec buttons will be used to set the quantity of the item the customer wants to buy before they add to cart
+
+
+            //the inc and dec buttons will be used to set the quantity of the item
+            //the customer wants to buy before they add to cart
 
             //handle the addition
             btnInc.setOnClickListener {

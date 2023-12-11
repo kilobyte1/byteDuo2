@@ -18,13 +18,17 @@ object FirebaseDBManager {
             val userReference = databaseReference.child("customers").child(it)
             userReference.child("email").setValue(customer.email)
             userReference.child("fullName").setValue(customer.fullName)
-            userReference.child("c").setValue(customer.fullName)
             userReference.child("username").setValue(customer.username)
             userReference.child("role").setValue(customer.role)
             userReference.child("isActive").setValue(customer.isActive)
         }
     }
 
+    fun getCurrentUserId(): String? {
+        val auth = FirebaseAuth.getInstance()
+        val currentUser = auth.currentUser
+        return currentUser?.uid
+    }
 
 
 

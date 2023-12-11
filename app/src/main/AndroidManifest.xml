@@ -16,7 +16,7 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
-            android:name=".adapter.OrderAdapter"
+            android:name=".adapter.CartAdapter"
             android:exported="false" />
         <activity
             android:name=".View.AdminCompleteInfo"
@@ -25,7 +25,7 @@
             android:name=".Controller.AdminMain"
             android:exported="false" />
         <activity
-            android:name=".Controller.Basket"
+            android:name=".Controller.Orders"
             android:exported="false" />
         <activity
             android:name=".Controller.CustomerMain"
