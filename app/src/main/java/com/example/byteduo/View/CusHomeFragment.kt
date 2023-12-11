@@ -61,6 +61,7 @@ class CusHomeFragment : Fragment() {
         // Initialization code
         val userName = view.findViewById<TextView>(R.id.txtUserName)
         val searchBar = view.findViewById<EditText>(R.id.txtSearch)
+        val cart = view.findViewById<TextView>(R.id.txtCart)
 
         //get the listview on the xml // ready to contain the various fragments
         menuListView = view.findViewById(R.id.menuListView)
@@ -138,6 +139,8 @@ class CusHomeFragment : Fragment() {
 
         menuAdapter.setSelectedPosition(position)
     }
+
+
 
 
 

@@ -22,9 +22,9 @@
             android:padding="16dp">
 
             <ImageView
-                android:id="@+id/itemImageView"
-                android:layout_width="102dp"
-                android:layout_height="118dp"
+                android:id="@+id/cartItemImage"
+                android:layout_width="159dp"
+                android:layout_height="134dp"
                 android:layout_gravity="center"
                 android:scaleType="fitCenter" />
 
@@ -36,7 +36,7 @@
                 android:paddingStart="16dp">
 
                 <TextView
-                    android:id="@+id/itemNameTextView"
+                    android:id="@+id/cartItemName"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Coffee Name"
@@ -46,7 +46,7 @@
                     android:textStyle="bold" />
 
                 <TextView
-                    android:id="@+id/itemPriceTextView"
+                    android:id="@+id/cartItemPrice"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
@@ -56,59 +56,28 @@
                     android:textStyle="bold" />
 
                 <TextView
-                    android:id="@+id/itemDescriptionTextView"
+                    android:id="@+id/cartItemQty"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
-                    android:text="Description"
+                    android:text="Qty"
                     android:textColor="#000000"
                     android:textSize="14sp" />
 
             </LinearLayout>
 
-            <Button
-                android:id="@+id/incBtn"
-                android:layout_width="33dp"
-                android:layout_height="33dp"
-                android:layout_gravity="center"
-                android:background="@drawable/stroke"
-                android:text="+"
-                android:textColor="#FF8E542F"
-                android:textSize="25dp" />
-
-            <TextView
-                android:id="@+id/counter"
-                android:layout_width="39dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:hint="0"
-                android:textAlignment="center"
-                android:textColor="@color/black"
-                android:textColorHint="@color/black"
-                android:textSize="20dp" />
-
-
-            <Button
-                android:id="@+id/decBtn"
-                android:layout_width="33dp"
-                android:layout_height="33dp"
-                android:layout_gravity="center"
-                android:background="@drawable/stroke"
-                android:text="-"
-                android:textColor="#FF8E542F"
-                android:textSize="25dp" />
 
         </LinearLayout>
 
 
         <Button
-            android:id="@+id/btnAdd"
+            android:id="@+id/cartItemBtn"
             android:layout_width="57dp"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|end"
             android:layout_marginTop="8dp"
             android:background="@drawable/round_corner_left"
-            android:text="+"
+            android:text="-"
             android:textSize="30dp" />
 
 

@@ -16,7 +16,7 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
-            android:name=".View.ItemView"
+            android:name=".adapter.OrderAdapter"
             android:exported="false" />
         <activity
             android:name=".View.AdminCompleteInfo"

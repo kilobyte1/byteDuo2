@@ -1,20 +1,22 @@
 package com.example.byteduo.adapter
 
 import android.content.Context
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.byteduo.R
 import com.example.byteduo.model.MenuItems
-import org.w3c.dom.Text
 
 class MenuItemsAdapter : RecyclerView.Adapter<MenuItemsAdapter.ViewHolder>() {
 
     private var items: List<MenuItems> = listOf()
+    //add btn
 
     fun setItems(items: List<MenuItems>) {
         this.items = items
@@ -41,6 +43,48 @@ class MenuItemsAdapter : RecyclerView.Adapter<MenuItemsAdapter.ViewHolder>() {
         private val itemImageView: ImageView =  itemView.findViewById(R.id.itemImageView)
         private val itemDescription: TextView = itemView.findViewById(R.id.itemDescriptionTextView)
 
+        //btn add
+        private val btnAdd: Button = itemView.findViewById(R.id.btnAdd)
+        private val btnInc: Button = itemView.findViewById(R.id.incBtn)
+        private val btnDec: Button = itemView.findViewById(R.id.decBtn)
+        private val counter: TextView = itemView.findViewById(R.id.counter)
+
+        private var itemCount: Int = 0
+
+
+
+        init {
+            // Set click listener for the btnAdd
+            btnAdd.setOnClickListener {
+                //ToDo
+                //create a new activity and when the user click on a menu item, they are directed to it to set the quantity
+                //on thet activity, the user can add to cart and this should update the cart
+                //val intent = Intent(itemView.context, YourTargetActivity::class.java)
+                //itemView.context.startActivity(intent)
+            }
+            //the add and dec buttons will be used to set the quantity of the item the customer wants to buy before they add to cart
+
+            //handle the addition
+            btnInc.setOnClickListener {
+                itemCount++
+                updateCounter()
+            }
+            // handle the minus
+            btnDec.setOnClickListener {
+                if (itemCount > 0) {
+                    itemCount--
+                    updateCounter()
+                }
+            }
+        }
+        //update the counter
+        private fun updateCounter() {
+            // Update the counter TextView
+            counter.text = itemCount.toString()
+        }
+
+
+        //bind the items in the view to one container
         fun bind(menuItem: MenuItems) {
             val itemImageUrl = menuItem.itemImage
             if (itemImageUrl != null) {
@@ -57,6 +101,8 @@ class MenuItemsAdapter : RecyclerView.Adapter<MenuItemsAdapter.ViewHolder>() {
                 .circleCrop()
                 .into(itemImageView)
         }
+
     }
+
 
 }
