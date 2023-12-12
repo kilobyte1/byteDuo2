@@ -13,7 +13,7 @@ import com.example.byteduo.R
 import com.example.byteduo.model.CartItem
 
 //order adapter should extend recucler
-class CartAdapter : RecyclerView.Adapter<CartAdapter.ViewHolder>() {
+class CartAdapter(private val removeItemListener: (CartItem) -> Unit) : RecyclerView.Adapter<CartAdapter.ViewHolder>() {
 
     private var cartItems: List<CartItem> = mutableListOf()
 
@@ -46,10 +46,13 @@ class CartAdapter : RecyclerView.Adapter<CartAdapter.ViewHolder>() {
         // Load the rounded image using the loadRoundedImage function
         loadRoundedImage(currentItem.menuItem?.itemImage, holder.cartItemImage, holder.itemView.context)
 
-        holder.cartItemQty.text = currentItem.quantity.toString()
+        holder.cartItemQty.text = String.format("Qty: %s", currentItem.quantity.toString())
 
         holder.btnRemove.setOnClickListener {
             // Handle button click // remove item from cart
+
+            // Call the removeItemListener with the current item when the button is clicked
+            removeItemListener.invoke(currentItem)
         }
     }
 
@@ -61,7 +64,7 @@ class CartAdapter : RecyclerView.Adapter<CartAdapter.ViewHolder>() {
          val cartItemQty: TextView = itemView.findViewById(R.id.cartItemQty)
 
         //btn add
-         val btnRemove: Button = itemView.findViewById(R.id.cartItemBtn)
+         val btnRemove: Button = itemView.findViewById(R.id.cartItemRemove)
 
     }
 

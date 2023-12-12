@@ -117,7 +117,6 @@
         android:layout_width="13dp"
         android:layout_height="16dp"
         android:hint="cart"
-        android:text="1"
         android:textColor="#151515"
         android:textColorHint="#090909"
         app:layout_constraintBottom_toBottomOf="@+id/imageView"

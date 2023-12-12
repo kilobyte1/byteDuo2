@@ -22,21 +22,19 @@ import com.example.byteduo.model.Customer
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
 
 class CusHomeFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
+
+    private lateinit var databaseReference: DatabaseReference
+
 
     private lateinit var menuListView: ListView
     private lateinit var menuAdapter: MenuAdapter
+    private lateinit var cartTopCounter: TextView
 
     private val menuItems = listOf("Hot Coffee","Ice Teas","Hot Teas", "Bakery", "Drinks")
     private val fragments = listOf(HotCoffeeFragment(), IceTeasFragment(), HotTeasFragment(), BakeryFragment(), DrinksFragment())
@@ -46,8 +44,7 @@ class CusHomeFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
+
         }
     }
 
@@ -61,7 +58,7 @@ class CusHomeFragment : Fragment() {
         // Initialization code
         val userName = view.findViewById<TextView>(R.id.txtUserName)
         val searchBar = view.findViewById<EditText>(R.id.txtSearch)
-        val cart = view.findViewById<TextView>(R.id.txtCart)
+        cartTopCounter = view.findViewById<TextView>(R.id.txtCart)
 
         //get the listview on the xml // ready to contain the various fragments
         menuListView = view.findViewById(R.id.menuListView)
@@ -87,6 +84,9 @@ class CusHomeFragment : Fragment() {
 
         // Set the selected position in the menu adapter
         menuAdapter.setSelectedPosition(defaultPosition)
+
+        // Call the function to get the number of items in the cart
+        updateCartCount()
 
 
 
@@ -140,27 +140,59 @@ class CusHomeFragment : Fragment() {
         menuAdapter.setSelectedPosition(position)
     }
 
+    // Function to update the cart counter TextView
 
+    private fun updateCartCount() {
+        Log.d("CusHomeFragment", "updateCartCount: Getting number of items in cart...")
 
+        getNumberOfItemsInCart { numberOfItems ->
+            // Update the UI with the number of items
+            Log.d("CusHomeFragment", "updateCartCount: Number of items in cart: $numberOfItems")
 
-
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment CusHomeFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            CusHomeFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
+            requireActivity().runOnUiThread {
+                cartTopCounter.text = numberOfItems.toString()
             }
+        }
     }
+
+    // Function to get the number of items in the cart
+    private fun getNumberOfItemsInCart(callback: (Int) -> Unit) {
+        Log.d("CusHomeFragment", "getNumberOfItemsInCart: Fetching number of items in cart...")
+
+        val userId = FirebaseAuth.getInstance().currentUser?.uid
+
+        if (userId != null) {
+            databaseReference = FirebaseDatabase.getInstance().getReference("Cart").child(userId)
+
+            databaseReference.addValueEventListener(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    // Sum up the quantities of all items in the cart
+                    var totalQuantity = 0
+
+                    for (itemSnapshot in snapshot.children) {
+                        val quantity = (itemSnapshot.child("quantity").value as? Long)?.toInt() ?: 0
+                        totalQuantity += quantity
+                    }
+
+                    Log.d("CusHomeFragment", "getNumberOfItemsInCart: Total quantity in cart: $totalQuantity")
+
+                    callback(totalQuantity)
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    Log.e("CusHomeFragment", "getNumberOfItemsInCart: Error fetching items in cart", error.toException())
+
+                    // Handle error
+                    callback(0) // Return 0 in case of an error
+                }
+            })
+        } else {
+            // User not authenticated, return 0 items
+            callback(0)
+        }
+    }
+
+
+
+
 }

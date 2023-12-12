@@ -57,7 +57,7 @@
 
                 <TextView
                     android:id="@+id/cartItemQty"
-                    android:layout_width="wrap_content"
+                    android:layout_width="93dp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
                     android:text="Qty"
@@ -71,7 +71,7 @@
 
 
         <Button
-            android:id="@+id/cartItemBtn"
+            android:id="@+id/cartItemRemove"
             android:layout_width="57dp"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|end"
