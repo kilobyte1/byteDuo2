@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".View.AccountFragment">
+
+    <!-- Logout Button -->
+    <Button
+        android:id="@+id/btnAdminLogout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Log out"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_margin="16dp" />
+
+    <ImageView
+        android:id="@+id/imageView5"
+        android:layout_width="186dp"
+        android:layout_height="188dp"
+        android:layout_below="@id/btnAdminLogout"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:paddingBottom="20dp"
+        android:src="@drawable/acct" />
+
+    <TextView
+        android:id="@+id/txtAdminName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/imageView5"
+        android:layout_marginTop="8dp"
+        android:textColor="@color/black"
+        android:layout_marginStart="16dp"
+        android:text="Name"
+        android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/txtUpdateDetails"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/txtAdminName"
+        android:layout_marginTop="8dp"
+        android:layout_marginStart="16dp"
+        android:text="Update details"
+        android:textColor="@android:color/holo_blue_dark"
+        android:textStyle="bold" />
+
+    <Button
+        android:id="@+id/btnAddItem"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Add Menu Item"
+        android:layout_below="@id/txtUpdateDetails"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="16dp" />
+
+    <Button
+        android:id="@+id/btnRemoveItem"
+        android:layout_width="134dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/btnAddItem"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="30dp"
+        android:text="Remove Item" />
+
+    <Spinner
+        android:id="@+id/removeSpinner"
+        android:layout_width="wrap_content"
+        android:layout_height="41dp"
+        android:layout_below="@id/btnRemoveItem"
+        android:background="@drawable/stroke"
+        android:layout_marginStart="20dp"/>
+
+
+</RelativeLayout>

@@ -1,0 +1,50 @@
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <ImageView
+        android:id="@+id/imageView6"
+        android:layout_width="205dp"
+        android:layout_height="156dp"
+        app:srcCompat="@drawable/picturesicon2" />
+
+    <EditText
+        android:id="@+id/editTextName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Item Name"/>
+
+    <EditText
+        android:id="@+id/editTextPrice"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Item Price"/>
+
+    <EditText
+        android:id="@+id/editTextdescription"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Description"/>
+
+    <EditText
+        android:id="@+id/editTextcategory"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Category"/>
+
+    <Button
+        android:id="@+id/btnAddImage"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Add Image"/>
+
+    <Button
+        android:id="@+id/btnDone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Done"/>
+</LinearLayout>

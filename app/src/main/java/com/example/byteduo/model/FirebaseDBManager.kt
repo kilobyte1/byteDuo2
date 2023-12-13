@@ -31,6 +31,100 @@ object FirebaseDBManager {
     }
 
 
+    fun getAdminInfo(userId: String, callback: (Admin?) -> Unit) {
+        val adminReference = FirebaseDatabase.getInstance().getReference("admins").child(userId)
+
+        adminReference.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                if (snapshot.exists()) {
+                    val admin = snapshot.getValue(Admin::class.java)
+                    callback(admin)
+                } else {
+                    callback(null)
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                // Handle the error
+                callback(null)
+            }
+        })
+    }
+
+
+    fun getCustomerInfo(userId: String, callback: (Customer?) -> Unit) {
+        val customerReference = FirebaseDatabase.getInstance().getReference("customers").child(userId)
+
+        customerReference.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                if (snapshot.exists()) {
+                    val customers = snapshot.getValue(Customer::class.java)
+                    callback(customers)
+                } else {
+                    callback(null)
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                // Handle the error
+                callback(null)
+            }
+        })
+    }
+
+    fun getNumberOfItemsInCart(userId: String, callback: (Int) -> Unit) {
+        val databaseReference = FirebaseDatabase.getInstance().getReference("Cart").child(userId)
+
+        databaseReference.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                // Sum up the quantities of all items in the cart
+                var totalQuantity = 0
+
+                for (itemSnapshot in snapshot.children) {
+                    val quantity = (itemSnapshot.child("quantity").value as? Long)?.toInt() ?: 0
+                    totalQuantity += quantity
+                }
+
+                callback(totalQuantity)
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                callback(0) // Return 0 in case of an error
+            }
+        })
+    }
+
+    fun getMenuItems(callback: (List<MenuItems>) -> Unit) {
+        try {
+            // Initialize Firebase Database
+            val menuItemsRef = FirebaseDatabase.getInstance().getReference("MenuItems")
+
+            // Fetch menu items from the database
+            menuItemsRef.addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(dataSnapshot: DataSnapshot) {
+                    val menuItems = mutableListOf<MenuItems>()
+
+                    for (itemSnapshot in dataSnapshot.children) {
+                        val menuItem = itemSnapshot.getValue(MenuItems::class.java)
+                        menuItem?.let { menuItems.add(it) }
+                    }
+
+                    // Invoke the callback with the menu items
+                    callback(menuItems)
+                }
+
+                override fun onCancelled(databaseError: DatabaseError) {
+                    // Handle the error
+                }
+            })
+
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+
+
 
 //    fun addAdmin(admin: Admin) {
 //        val userId = FirebaseAuth.getInstance().currentUser?.uid

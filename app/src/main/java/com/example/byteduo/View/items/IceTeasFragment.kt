@@ -60,7 +60,7 @@ class IceTeasFragment : Fragment() {
         databaseReference = FirebaseDatabase.getInstance().getReference("MenuItems")
 
         // Fetch data from Firebase and filter items with category
-        retrieveAndDisplayItems("Ice Tea")
+        retrieveAndDisplayItems("Ice Teas")
 
         return view
     }

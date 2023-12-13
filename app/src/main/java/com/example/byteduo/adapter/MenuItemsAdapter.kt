@@ -15,10 +15,10 @@ import com.example.byteduo.model.MenuItems
 
 class MenuItemsAdapter(
     private val onAddClickListener: (MenuItems, itemCount: Int) -> Unit,
-    private val onUpdateCartListener: () -> Unit
-) : RecyclerView.Adapter<MenuItemsAdapter.ViewHolder>() {
+    private val onUpdateCartListener: () -> Unit) : RecyclerView.Adapter<MenuItemsAdapter.ViewHolder>() {
+
+
     private var items: List<MenuItems> = listOf()
-    //add btn
 
     fun setItems(items: List<MenuItems>) {
         this.items = items
@@ -116,6 +116,7 @@ class MenuItemsAdapter(
                 .circleCrop()
                 .into(itemImageView)
         }
+
 
     }
 

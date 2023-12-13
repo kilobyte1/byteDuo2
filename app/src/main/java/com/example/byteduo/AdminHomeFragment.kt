@@ -10,9 +10,17 @@ import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ListView
 import android.widget.TextView
+import com.example.byteduo.View.items.BakeryFragment
+import com.example.byteduo.View.items.DrinksFragment
+import com.example.byteduo.View.items.HotCoffeeFragment
+import com.example.byteduo.View.items.HotTeasFragment
+import com.example.byteduo.View.items.IceTeasFragment
+import com.example.byteduo.adapter.MenuAdapter
 import com.example.byteduo.model.Admin
 import com.example.byteduo.model.Customer
+import com.example.byteduo.model.FirebaseDBManager
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -20,27 +28,21 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
 
-/**
- * A simple [Fragment] subclass.
- * Use the [adminHomeFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class AdminHomeFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
 
+
+    private lateinit var menuListView: ListView
+    private lateinit var menuAdapter: MenuAdapter
+    private lateinit var cartTopCounter: TextView
+
+    private val menuItems = listOf("Hot Coffee","Ice Teas","Hot Teas", "Bakery", "Drinks")
+    private val fragments = listOf(HotCoffeeFragment(), IceTeasFragment(), HotTeasFragment(), BakeryFragment(), DrinksFragment())
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
+
         }
     }
 
@@ -55,16 +57,35 @@ class AdminHomeFragment : Fragment() {
         // Initialization code
         val userName = view.findViewById<TextView>(R.id.txtUserName)
         val search = view.findViewById<EditText>(R.id.txtSearch)
-        val addBtn = view.findViewById<Button>(R.id.btnAdd)
-        val editBtn = view.findViewById<Button>(R.id.btnEdit)
-        val deleteBtn = view.findViewById<Button>(R.id.btnDelete)
+        val  cartTopCounter = view.findViewById<TextView>(R.id.txtCart)
 
 
-        // Check for null after findViewById
-        if (userName == null ) {
-            Log.e("AdminHomeFragment", "null")
-            return view
+
+        //get the listview on the xml // ready to contain the various fragments
+        menuListView = view.findViewById(R.id.menuListView)
+        menuAdapter = MenuAdapter(requireActivity(), menuItems)
+        menuListView.adapter = menuAdapter
+
+        // Item click listener
+        menuListView.setOnItemClickListener { _, _, position, _ ->
+            //replace fragment
+            onMenuItemClicked(position)
         }
+
+
+        // Create an instance of MenuAdapter
+        menuAdapter = MenuAdapter(requireActivity(), menuItems)
+        menuListView.adapter = menuAdapter
+
+        // Get the default fragment position
+        val defaultPosition = menuAdapter.getDefaultFragmentPosition()
+
+        // Replace the fragment container with the default fragment
+        onMenuItemClicked(defaultPosition)
+
+        // Set the selected position in the menu adapter
+        menuAdapter.setSelectedPosition(defaultPosition)
+
 
         // Set an OnClickListener to enable focus when search is clicked
         search.setOnClickListener { search.isFocusableInTouchMode = true
@@ -73,48 +94,39 @@ class AdminHomeFragment : Fragment() {
             imm.showSoftInput(search, InputMethodManager.SHOW_IMPLICIT)
         }
 
+
+        //get the admin userId from the database
         val userId = FirebaseAuth.getInstance().currentUser?.uid
 
         if (userId != null) {
-            val database = FirebaseDatabase.getInstance().reference
-            val adminReference = database.child("admins").child(userId)
-
-            adminReference.addListenerForSingleValueEvent(object : ValueEventListener {
-                override fun onDataChange(snapshot: DataSnapshot) {
-                    Log.d("SnapshotData", snapshot.toString()) // Log the snapshot data
-
-                    if (snapshot.exists()) {
-                        val admin = snapshot.getValue(Admin::class.java)
-                        Log.d("User", "Admin is $admin")
-                        if (admin != null) {
-                            requireActivity().runOnUiThread {
-                                val name = admin.username
-                                userName.text = name
-                            }
+            FirebaseDBManager.getAdminInfo(userId) { admin ->
+                if (admin != null) {
+                    requireActivity().runOnUiThread {
+                        val name = admin.username
+                        userName.text = name
+                    }
+                    // Call the function to get the number of items in the cart
+                    FirebaseDBManager.getNumberOfItemsInCart(userId) { numberOfItems ->
+                        // Update your UI with the number of items
+                        requireActivity().runOnUiThread {
+                            cartTopCounter.text = numberOfItems.toString()
                         }
                     }
                 }
-
-                override fun onCancelled(error: DatabaseError) {
-                    // Handle the error
-                }
-            })
+            }
         }
 
         return view
     }
 
+    // Replace the fragment container with the selected fragment
+    private fun onMenuItemClicked(position: Int) {
 
+        requireActivity().supportFragmentManager.beginTransaction()
+            .replace(R.id.fragmentContainer, fragments[position])
+            .commit()
 
-    companion object {
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            AdminHomeFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
-            }
+        menuAdapter.setSelectedPosition(position)
     }
 
 }
