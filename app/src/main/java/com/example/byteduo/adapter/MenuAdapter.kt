@@ -24,7 +24,7 @@ class MenuAdapter(private val context: FragmentActivity, private val items: List
     fun getDefaultFragmentPosition(): Int {
 
         //default opened fragment should be Hot Teas
-        return items.indexOf("Hot Teas")
+        return items.indexOf("Hot Coffee")
     }
     override fun getCount(): Int = items.size
 

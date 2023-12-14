@@ -1,5 +1,6 @@
 package com.example.byteduo.model
 
-class OrderDetails {
-
-}
+    data class OrderDetails(
+        val orderId: String,
+        val cartItems: List<CartItem>
+    )

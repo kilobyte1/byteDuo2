@@ -14,6 +14,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.example.byteduo.Controller.AccountController
+import com.example.byteduo.EditItemDialogFragment
 import com.example.byteduo.R
 import com.example.byteduo.adapter.AddItemDialogFragment
 import com.example.byteduo.model.FirebaseDBManager
@@ -28,6 +29,7 @@ class AdminAccountFragment : Fragment() {
     private var menuItems = listOf<MenuItems>()
     private lateinit var menuItemsAdapter: ArrayAdapter<MenuItems>
     private val firebaseDBManager = FirebaseDBManager
+    private lateinit var btnEditItem: Button
 
 
     override fun onCreateView(
@@ -42,6 +44,8 @@ class AdminAccountFragment : Fragment() {
         val btnAddItem = view.findViewById<Button>(R.id.btnAddItem)
         btnRemove = view.findViewById(R.id.btnRemoveItem)
         adminName = view.findViewById(R.id.txtAdminName)
+        btnEditItem = view.findViewById(R.id.btnEditItem)
+
 
         // Initialize menuItemsAdapter
         menuItemsAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, mutableListOf())
@@ -54,8 +58,7 @@ class AdminAccountFragment : Fragment() {
             updateAdminName(userId)
         }
 
-        // Create an instance of AccountController
-        val accountController = AccountController()
+
 
         btnAddItem.setOnClickListener {
             // Show the Add Item dialog
@@ -63,6 +66,8 @@ class AdminAccountFragment : Fragment() {
             dialog.show(parentFragmentManager, "AddItemDialog")
         }
 
+        // Create an instance of AccountController
+        val accountController = AccountController()
         // Set a click listener for the logout button
         btnLogout.setOnClickListener {
             // Call the logout function in the controller
@@ -73,10 +78,16 @@ class AdminAccountFragment : Fragment() {
         //function in dbmanager
         spinner = view.findViewById(R.id.removeSpinner)
 
+        //btn Remove
         //  fetch menu items
         fetchMenuItems()
         btnRemove.setOnClickListener(){
             removeSelectedItem()
+        }
+
+        //btn edit
+        btnEditItem.setOnClickListener(){
+            handleSelectedItem()
         }
 
         // Return the inflated view
@@ -122,13 +133,21 @@ class AdminAccountFragment : Fragment() {
         val selectedMenuItemPosition = spinner.selectedItemPosition
 
         if (selectedMenuItemPosition != AdapterView.INVALID_POSITION) {
-            val selectedMenuItem = menuItems.getOrNull(selectedMenuItemPosition)
+            if (selectedMenuItemPosition == 0) {
+                // The placeholder "Select an item" is selected
+                showToast("Please select an actual item to remove.")
+                return
+            }
+
+            val selectedMenuItem = menuItems.getOrNull(selectedMenuItemPosition - 1)
             val itemName = selectedMenuItem?.itemName
 
             if (itemName != null) {
                 // Remove the item from Firebase
                 val menuItemsManager = MenuItems()
                 menuItemsManager.deleteItem(itemName) {
+                    // Show a Toast message indicating successful removal
+                    showToast("Item '$itemName' removed successfully.")
                     // Callback to refresh the spinner after successful deletion
                     fetchMenuItems()
 
@@ -138,6 +157,36 @@ class AdminAccountFragment : Fragment() {
     }
 
 
+    private fun handleSelectedItem() {
+        val selectedMenuItemPosition = spinner.selectedItemPosition
 
+        if (selectedMenuItemPosition != AdapterView.INVALID_POSITION) {
+            if (selectedMenuItemPosition == 0) {
+                // The placeholder "Select an item" is selected
+                showToast("Please select an actual item.")
+                return
+            }
 
+            if (menuItems != null) {
+                val selectedMenuItem = menuItems.getOrNull(selectedMenuItemPosition - 1)
+
+                // Open the EditItemDialogFragment and pass the selected item's details
+                if (selectedMenuItem != null) {
+
+                    showEditDialog(selectedMenuItem)
+                }
+            }
+        }
+    }
+
+    private fun showEditDialog(selectedMenuItem: MenuItems) {
+        val dialog = EditItemDialogFragment.newInstance(selectedMenuItem)
+        Log.d("MyApp", "Entering updateItem function")
+
+        dialog.show(childFragmentManager, "EditItemDialogFragment")
+    }
+
+    private fun showToast(message: String) {
+        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
+    }
 }

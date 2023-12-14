@@ -49,7 +49,6 @@ class HotTeasFragment : Fragment() {
             handleAddToCart(menuItem, itemCount)
         },
         onUpdateCartListener = {
-            // Handle cart update here if needed
         }
         )
 
@@ -60,7 +59,7 @@ class HotTeasFragment : Fragment() {
         databaseReference = FirebaseDatabase.getInstance().getReference("MenuItems")
 
         // Fetch data from Firebase and filter items with category
-        retrieveAndDisplayItems("Hot Tea")
+        retrieveAndDisplayItems("Hot Teas")
 
         return view
     }

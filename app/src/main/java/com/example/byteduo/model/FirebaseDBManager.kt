@@ -105,7 +105,8 @@ object FirebaseDBManager {
                     val menuItems = mutableListOf<MenuItems>()
 
                     for (itemSnapshot in dataSnapshot.children) {
-                        val menuItem = itemSnapshot.getValue(MenuItems::class.java)
+                        val key = itemSnapshot.key
+                        val menuItem = itemSnapshot.getValue(MenuItems::class.java)?.copy(itemId = key)
                         menuItem?.let { menuItems.add(it) }
                     }
 

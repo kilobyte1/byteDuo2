@@ -34,7 +34,6 @@ class AdminHomeFragment : Fragment() {
 
     private lateinit var menuListView: ListView
     private lateinit var menuAdapter: MenuAdapter
-    private lateinit var cartTopCounter: TextView
 
     private val menuItems = listOf("Hot Coffee","Ice Teas","Hot Teas", "Bakery", "Drinks")
     private val fragments = listOf(HotCoffeeFragment(), IceTeasFragment(), HotTeasFragment(), BakeryFragment(), DrinksFragment())
@@ -117,6 +116,8 @@ class AdminHomeFragment : Fragment() {
         }
 
         return view
+        Log.d("Admin Home", "We got here")
+
     }
 
     // Replace the fragment container with the selected fragment

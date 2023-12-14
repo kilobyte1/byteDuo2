@@ -55,7 +55,7 @@ class HotCoffeeFragment : Fragment() {
         )
         recyclerView.adapter = adapter
 
-        Log.d("Drink", "we got here")
+        Log.d("HotCoffee", "we got here")
 
         databaseReference = FirebaseDatabase.getInstance().getReference("MenuItems")
 
@@ -66,7 +66,7 @@ class HotCoffeeFragment : Fragment() {
     }
 
     private fun retrieveAndDisplayItems(category: String) {
-        databaseReference.addValueEventListener(object : ValueEventListener {
+        databaseReference.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val items = mutableListOf<MenuItems>()
 
@@ -86,6 +86,7 @@ class HotCoffeeFragment : Fragment() {
             }
         })
     }
+
 
     // Handle the "Add" button click by creating a CartItem and storing it in the database
     private fun handleAddToCart(menuItem: MenuItems,quantity: Int) {
@@ -114,5 +115,11 @@ class HotCoffeeFragment : Fragment() {
 
             databaseReference.push().setValue(cartItem)
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        // Fetch data from Firebase and filter items with category
+        retrieveAndDisplayItems("Hot Coffee")
     }
 }

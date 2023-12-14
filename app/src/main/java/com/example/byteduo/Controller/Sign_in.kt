@@ -77,12 +77,10 @@ class Sign_in : AppCompatActivity() {
                 return@setOnClickListener
             }
 
-            val dialog = Dialog(this)
-            dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-            dialog.setContentView(R.layout.dialog_wait)
-            dialog.setCanceledOnTouchOutside(false)
-            dialog.show()
-            
+            // Show the wait dialog using DialogUtils
+            val dialog = Loading.showWaitDialog(this@Sign_in)
+
+
 
             mAuth.signInWithEmailAndPassword(email, enteredPassword)
 

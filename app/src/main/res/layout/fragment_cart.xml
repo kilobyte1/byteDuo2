@@ -66,11 +66,11 @@
         android:gravity="end">
 
         <Button
-            android:id="@+id/btnCheckout"
+            android:id="@+id/btnMakePayment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/lowerthird"
-            android:text="Go to Checkout" />
+            android:text="Make Payment" />
 
         <TextView
             android:id="@+id/txtSubtotal"

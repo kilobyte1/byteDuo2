@@ -170,11 +170,8 @@ class Sign_up : AppCompatActivity() {
                 val inn = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
                 inn.hideSoftInputFromWindow(currentFocus?.windowToken, 0)
 
-                dialog = Dialog(this)
-                dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-                dialog.setContentView(R.layout.dialog_wait)
-                dialog.setCanceledOnTouchOutside(false)
-                dialog.show()
+                val dialog = Loading.showWaitDialog(this@Sign_up)
+
 
                 // Create user in Firebase Authentication
                 mAuth.createUserWithEmailAndPassword(email, enteredPassword)

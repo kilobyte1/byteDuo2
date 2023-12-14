@@ -1,10 +1,8 @@
 package com.example.byteduo.model
 
 data class Order(
-    val orderId: Long,
-    val cusId: Long,
+    val orderId: String,
+    val cusId: String,
     val orderTime: String,
-    val orderStatus: String){
-
-
-}
+    val orderStatus: String,
+)

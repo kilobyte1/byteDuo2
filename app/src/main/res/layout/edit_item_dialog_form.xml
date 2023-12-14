@@ -7,45 +7,45 @@
     android:padding="16dp">
 
     <ImageView
-        android:id="@+id/imageView6"
+        android:id="@+id/updateImagePreview"
         android:layout_width="205dp"
         android:layout_height="156dp"
         app:srcCompat="@drawable/picturesicon2" />
 
     <EditText
-        android:id="@+id/editTextName"
+        android:id="@+id/updateItemName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Item Name"/>
 
     <EditText
-        android:id="@+id/editTextPrice"
+        android:id="@+id/updateItemPrice"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Item Price"/>
 
     <EditText
-        android:id="@+id/editTextdescription"
+        android:id="@+id/updateItemDescription"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Description"/>
 
 
     <Spinner
-        android:id="@+id/categorySpinner"
+        android:id="@+id/updateItemCategory"
         android:layout_width="match_parent"
         android:layout_height="41dp"
         android:background="@drawable/stroke" />
 
     <Button
-        android:id="@+id/btnAddImage"
+        android:id="@+id/btnChangeImage"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Add Image"/>
+        android:text="Change Image"/>
 
     <Button
-        android:id="@+id/btnDone"
+        android:id="@+id/btnUpdate"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Done"/>
+        android:text="Update"/>
 </LinearLayout>

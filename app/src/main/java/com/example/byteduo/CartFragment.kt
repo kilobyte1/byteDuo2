@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.TextView
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -28,6 +29,7 @@ private lateinit var message: TextView
 private lateinit var subTotal: TextView
 private lateinit var total: TextView
 private lateinit var fees: TextView
+private lateinit var btnMakePayment: Button
 
 
 class CartFragment : Fragment() {
@@ -59,6 +61,13 @@ class CartFragment : Fragment() {
         subTotal= view.findViewById(R.id.txtSubtotal)
         total = view.findViewById(R.id.txtTotal)
         fees = view.findViewById(R.id.txtFee)
+        btnMakePayment = view.findViewById(R.id.btnMakePayment)
+
+        btnMakePayment.setOnClickListener(){
+            // Show the dialog
+            val paymentOptionsDialog = PaymentOptionsDialogFragment()
+            paymentOptionsDialog.show(childFragmentManager, "PaymentOptionsDialogFragment")
+        }
 
 
         return view

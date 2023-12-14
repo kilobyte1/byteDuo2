@@ -19,7 +19,7 @@
         android:id="@+id/orderFragment"
         android:name="com.example.byteduo.View.OrderFragment"
         android:label="fragment_order"
-        tools:layout="@layout/fragment_order" />
+        tools:layout="@layout/fragment_orders" />
     <fragment
         android:id="@+id/cartFragment2"
         android:name="com.example.byteduo.CartFragment"
