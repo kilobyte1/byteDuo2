@@ -15,6 +15,7 @@ import com.example.byteduo.Controller.Loading
 import com.example.byteduo.Controller.OrderHandler
 import com.example.byteduo.Controller.OrderHandler.Companion.retrieveCartItemsFromDatabase
 import com.example.byteduo.R
+import com.example.byteduo.model.FirebaseDBManager.clearUserCart
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -39,6 +40,7 @@ class CardPaymentActivity : AppCompatActivity() {
         val payButton: Button = findViewById(R.id.btnPay)
 
          payButton.setOnClickListener {
+
              if (isValidCardDetails()) {
                  // Show a waiting dialog while processing the payment
                  val waitDialog = Loading.showWaitDialog(this@CardPaymentActivity)
@@ -50,6 +52,7 @@ class CardPaymentActivity : AppCompatActivity() {
                  Handler(Looper.getMainLooper()).postDelayed({
                      waitDialog.dismiss()
 
+                     clearUserCart()
                      // Show a message dialog to inform the user about the successful order
                      showAlert("Thank you for your order.\nPayment has been processed successfully. " +
                              "Proceed to the order page to monitor the status of your order")
@@ -66,7 +69,7 @@ class CardPaymentActivity : AppCompatActivity() {
         // Assuming the card payment is successful, create the order and add to the database
         retrieveCartItemsFromDatabase { cartItems ->
             // Call the createOrderAndDetails method from OrderHandler
-            OrderHandler.createOrderAndDetails(cartItems) { orderId ->
+            OrderHandler.createOrderAndDetails(cartItems, "Card") { orderId ->
                 // Handle any additional logic after creating the order, e.g., showing a success message
                 showToast("Payment successful. Order ID: $orderId")
 

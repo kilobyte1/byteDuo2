@@ -6,11 +6,9 @@ data class Customer(
     val mobile: String? = null,
     val username: String? = null,
     val role: String?="customer",
-    val isActive: Boolean = false
+    val active: Boolean = true
 
     //not storing password as this is not safe// firebase handles the hashing
-
-
 
 ){
     // Ensure you have a default constructor

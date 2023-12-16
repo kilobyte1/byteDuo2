@@ -180,8 +180,10 @@ class Sign_up : AppCompatActivity() {
                             // User creation successful
                             val user = mAuth.currentUser
                             if (user != null) {
+
+                                Log.d("Signup", "Your number is $mobile")
                                 // Perform database operations after user creation
-                                performDatabaseOperations(fullName, email, mobile, username, enteredPassword, user.uid
+                                performUserRegistration(fullName, email, mobile, username, enteredPassword, user.uid
                                 )
                             }
                         } else {
@@ -202,11 +204,6 @@ class Sign_up : AppCompatActivity() {
         }
 
 
-    private fun performDatabaseOperations(fullName: String, email: String, mobile: String, username: String, password: String, userId: String) {
-                // Username is available, proceed with user registration
-                performUserRegistration(fullName, email, mobile, username, password, userId)
-        }
-
 
     private fun performUserRegistration(fullName: String, email: String, mobile: String, username: String, password: String, userId: String) {
         // Save user data to the database using the userId
@@ -217,6 +214,7 @@ class Sign_up : AppCompatActivity() {
         val intent = Intent(this, CustomerMain::class.java)
         startActivity(intent)
     }
+
 
 
 

@@ -19,8 +19,9 @@ object FirebaseDBManager {
             userReference.child("email").setValue(customer.email)
             userReference.child("fullName").setValue(customer.fullName)
             userReference.child("username").setValue(customer.username)
+            userReference.child("mobile").setValue(customer.mobile)
             userReference.child("role").setValue(customer.role)
-            userReference.child("isActive").setValue(customer.isActive)
+            userReference.child("active").setValue(customer.active)
         }
     }
 
@@ -29,6 +30,8 @@ object FirebaseDBManager {
         val currentUser = auth.currentUser
         return currentUser?.uid
     }
+
+
 
 
     fun getAdminInfo(userId: String, callback: (Admin?) -> Unit) {
@@ -121,6 +124,22 @@ object FirebaseDBManager {
 
         } catch (e: Exception) {
             e.printStackTrace()
+        }
+    }
+
+    fun clearUserCart(userId: String) {
+        val cartReference = FirebaseDatabase.getInstance().getReference("Cart").child(userId)
+        cartReference.removeValue()
+    }
+
+     fun clearUserCart() {
+        val userId = getCurrentUserId()
+
+        if (userId != null) {
+            val cartReference = FirebaseDatabase.getInstance().getReference("Cart").child(userId)
+
+            // Remove all items from the cart
+            cartReference.removeValue()
         }
     }
 

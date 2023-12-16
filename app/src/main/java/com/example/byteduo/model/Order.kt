@@ -1,8 +1,9 @@
 package com.example.byteduo.model
 
 data class Order(
-    val orderId: String,
-    val cusId: String,
-    val orderTime: String,
-    val orderStatus: String,
+    val orderId: String? = null,
+    val cusId: String? = null,
+    val orderTime: String? = null,
+    val orderStatus: String? = null,
+    val orderItems: List<CartItem>?=null,
 )

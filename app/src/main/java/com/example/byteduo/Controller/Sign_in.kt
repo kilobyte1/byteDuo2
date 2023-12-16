@@ -119,7 +119,7 @@ class Sign_in : AppCompatActivity() {
                 override fun onDataChange(customerSnapshot: DataSnapshot) {
                     if (customerSnapshot.exists()) {
                         // Check if the user is active
-                        val isActive = customerSnapshot.child("isActive").getValue(Boolean::class.java)
+                        val isActive = customerSnapshot.child("active").getValue(Boolean::class.java)
 
                         if (isActive == true) {
                             // User is active, sign them into CustomerMain
@@ -137,7 +137,7 @@ class Sign_in : AppCompatActivity() {
                             override fun onDataChange(adminSnapshot: DataSnapshot) {
                                 if (adminSnapshot.exists()) {
                                     // Check if the admin is active
-                                    val isActive = adminSnapshot.child("isActive").getValue(Boolean::class.java)
+                                    val isActive = adminSnapshot.child("active").getValue(Boolean::class.java)
 
                                     if (isActive == true) {
                                         // Check if admin details are empty

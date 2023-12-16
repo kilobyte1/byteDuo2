@@ -10,7 +10,7 @@
         android:title="Cart"
         android:icon="@drawable/cart"/>
 
-    <item android:title="Order"
+    <item android:title="Orders"
         android:id="@+id/orderFragment"
         android:icon="@drawable/order"/>
 

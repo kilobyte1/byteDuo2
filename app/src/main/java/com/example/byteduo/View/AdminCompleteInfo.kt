@@ -24,18 +24,18 @@ import com.google.firebase.database.ValueEventListener
 
 class AdminCompleteInfo : AppCompatActivity() {
 
-    lateinit var fullNameInput: TextInputEditText
-    lateinit var usernameInput: TextInputEditText
-    lateinit var passwordInput: TextInputEditText
-    lateinit var confirmPasswordInput: TextInputEditText
-    lateinit var mobileNumberInput: TextInputEditText
-    lateinit var btnRegister: Button
-    lateinit var mAuth: FirebaseAuth
-    lateinit var dialog: Dialog
+    private lateinit var fullNameInput: TextInputEditText
+    private lateinit var usernameInput: TextInputEditText
+    private lateinit var passwordInput: TextInputEditText
+    private lateinit var confirmPasswordInput: TextInputEditText
+    private lateinit var mobileNumberInput: TextInputEditText
+    private lateinit var btnRegister: Button
+    private lateinit var mAuth: FirebaseAuth
+    private lateinit var dialog: Dialog
 
     // Database reference
-    lateinit var adminsRef: DatabaseReference
-    lateinit var adminSignUpController: AdminSignUpController
+    private lateinit var adminsRef: DatabaseReference
+    private lateinit var adminSignUpController: AdminSignUpController
 
 
     override fun onCreate(savedInstanceState: Bundle?) {

@@ -7,6 +7,6 @@ data class Admin(
     val email: String? = null,
     val mobile: String? = null,
     val username: String? = null,
-    val isActive: Boolean = false
+    val active: Boolean = true
 
 )

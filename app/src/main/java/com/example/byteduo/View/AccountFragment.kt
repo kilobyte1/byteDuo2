@@ -1,35 +1,37 @@
 package com.example.byteduo.View
 
+import android.app.AlertDialog
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.EditText
+import android.widget.ImageView
+import android.widget.TextView
+import android.widget.Toast
 import androidx.navigation.fragment.findNavController
 import com.example.byteduo.Controller.AccountController
+import com.example.byteduo.Controller.Loading
 import com.example.byteduo.R
+import com.example.byteduo.model.Customer
+import com.example.byteduo.model.FirebaseDBManager
+import com.example.byteduo.model.FirebaseDBManager.getCurrentUserId
+import com.google.firebase.auth.FirebaseAuth
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-/**
- * A simple [Fragment] subclass.
- * Use the [AccountFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class AccountFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
+    private lateinit var imgProfile: ImageView
+    private lateinit var txtGreeting: TextView
+    private lateinit var btnUpdateDetails: Button
+    private lateinit var btnChangePassword: Button
+    private lateinit var btnLogout: Button
+    private lateinit var btnChanEmail: Button
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
         }
     }
 
@@ -37,43 +39,217 @@ class AccountFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_account, container, false)
 
-        // Find the logout button directly without null check
-        val btnLogout = view.findViewById<Button>(R.id.btnLogout)
+        imgProfile = view.findViewById(R.id.imgProfile)
+        txtGreeting = view.findViewById(R.id.txtGreeting)
+        btnUpdateDetails = view.findViewById(R.id.btnUpdateDetails)
+        btnChangePassword = view.findViewById(R.id.btnChangePassword)
+        btnLogout = view.findViewById(R.id.btnLogout)
+        btnChanEmail = view.findViewById(R.id.btnChangeEmail)
 
-        // Create an instance of AccountController
-        val accountController = AccountController()
+        //set profile name
+        val userId = FirebaseAuth.getInstance().currentUser?.uid
+        if (userId != null) {
+            getCusName(userId)
+        }
 
-        // Set a click listener for the logout button
+        btnUpdateDetails.setOnClickListener {
+            // Use the getCurrentUserId or any other method to get the current user's ID
+            val userId = getCurrentUserId()
+
+            // Fetch customer details using the AccountController
+            if (userId != null) {
+                FirebaseDBManager.getCustomerInfo(userId) { customerDetails ->
+                    // Now, you have the customer details, open the dialog form
+                    showUpdateDetailsDialog(customerDetails)
+                }
+            }
+        }
+
+        btnChanEmail.setOnClickListener(){
+            showChangeEmailDialog()
+        }
+
+
+        btnChangePassword.setOnClickListener {
+            showChangePasswordDialog()
+        }
+
         btnLogout.setOnClickListener {
-            // Call the logout function in the controller
+            // Handle logout
+            val accountController = AccountController()
             accountController.onLogout(requireContext())
         }
 
-        // Return the inflated view
+
         return view
     }
 
+    private fun showChangeEmailDialog() {
+        val builder = AlertDialog.Builder(requireContext())
+        val inflater = LayoutInflater.from(requireContext())
+        val dialogView = inflater.inflate(R.layout.change_email_dialog, null)
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment AccountFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            AccountFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
+        // Initialize and set other views
+        val newEmailEditText = dialogView.findViewById<EditText>(R.id.etNewEmail)
+        val confirmNewEmailEditText = dialogView.findViewById<EditText>(R.id.etConfirmNewEmail)
+
+
+        builder.setView(dialogView)
+        builder.setTitle("Change Email")
+
+        // Positive button for changing email
+        builder.setPositiveButton("Change Email") { dialog, _ ->
+
+            val newEmail = newEmailEditText.text.toString()
+            val confirmEmail = confirmNewEmailEditText.text.toString()
+
+            // Validate emails
+            if (newEmail.isNotEmpty() && confirmEmail.isNotEmpty()) {
+                if (newEmail == confirmEmail) {
+                    // Show the Loading dialog
+                    val waitDialog = Loading.showWaitDialog(requireContext())
+
+                    // Call the function to change the email
+                    val accountController = AccountController()
+                    accountController.updateEmail(newEmail)
+
+                    // Dismiss the Loading dialog when the update is complete
+                    waitDialog.dismiss()
+
+                    // You can show a Toast message without dismissing the AlertDialog
+                    Toast.makeText(requireContext(), "A verification email has been sent...", Toast.LENGTH_SHORT).show()
+                } else {
+                    // Show a Toast message without dismissing the AlertDialog
+                    Toast.makeText(requireContext(), "Emails do not match", Toast.LENGTH_SHORT).show()
+                }
+            } else {
+                Toast.makeText(requireContext(), "Please enter both email fields", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        // Negative button for canceling
+        builder.setNegativeButton("Cancel") { dialog, _ ->
+            dialog.dismiss()
+        }
+
+        // Show the AlertDialog
+        builder.show()
+    }
+
+
+
+
+
+    private fun showUpdateDetailsDialog(customerDetails: Customer?) {
+
+
+        // For simplicity, I'll use AlertDialog
+        val builder = AlertDialog.Builder(requireContext())
+        val inflater = LayoutInflater.from(requireContext())
+        val dialogView = inflater.inflate(R.layout.update_details_dialog, null)
+
+        // Initialise and set other views
+        val fullNameEditText = dialogView.findViewById<EditText>(R.id.etFullName)
+        val mobileEditText = dialogView.findViewById<EditText>(R.id.etMobile)
+        val usernameEditText = dialogView.findViewById<EditText>(R.id.etUsername)
+
+        // Set values from customerDetails to EditText fields
+        fullNameEditText.setText(customerDetails?.fullName)
+        mobileEditText.setText(customerDetails?.mobile)
+        usernameEditText.setText(customerDetails?.username)
+
+        builder.setView(dialogView)
+        builder.setPositiveButton("Update") { dialog, _ ->
+
+
+            val updatedFullName = fullNameEditText.text.toString()
+            val updatedMobile = mobileEditText.text.toString()
+            val updatedUsername = usernameEditText.text.toString()
+
+
+
+            //commented out because it is not working
+            // Show the Loading dialog
+            //val waitDialog = Loading.showWaitDialog(requireContext())
+
+            val accountController = AccountController()
+            accountController.updateCustomerDetailsInDatabase(requireActivity(),updatedFullName, updatedMobile, updatedUsername)
+
+
+            //update the Full name greetings right after the user updates their details
+            val userId = getCurrentUserId()
+            if (userId != null) {
+                getCusName(userId)
+
+               // waitDialog.dismiss()
+            }
+            dialog.dismiss()
+        }
+        builder.setNegativeButton("Cancel") { dialog, _ ->
+            dialog.dismiss()
+        }
+
+        builder.show()
+    }
+
+    private fun showChangePasswordDialog() {
+        val builder = AlertDialog.Builder(requireContext())
+        val inflater = LayoutInflater.from(requireContext())
+        val dialogView = inflater.inflate(R.layout.change_password_dialog, null)
+
+        // Initialize and set other views
+        val newPasswordEditText = dialogView.findViewById<EditText>(R.id.etNewPassword)
+        val confirmPasswordEditText = dialogView.findViewById<EditText>(R.id.etConfirmPassword)
+
+        builder.setView(dialogView)
+        //builder.setTitle("Change Password")
+
+        // Positive button for changing password
+        builder.setPositiveButton("Change Password") { dialog, _ ->
+
+            val newPassword = newPasswordEditText.text.toString()
+            val confirmPassword = confirmPasswordEditText.text.toString()
+
+            // Validate passwords
+            if (newPassword.isNotEmpty() && confirmPassword.isNotEmpty() && newPassword == confirmPassword) {
+                // Passwords match, proceed with changing the password
+                // Show the Loading dialog
+                val waitDialog = Loading.showWaitDialog(requireContext())
+
+                // Call the function to change the password
+                val accountController = AccountController()
+                accountController.changePassword(requireContext(),newPassword)
+
+                waitDialog.dismiss()
+
+            } else {
+                // Passwords don't match
+                //Toast.makeText(this,"Passwords do not match")
+            }
+
+            dialog.dismiss()
+        }
+
+        // Negative button for canceling
+        builder.setNegativeButton("Cancel") { dialog, _ ->
+            dialog.dismiss()
+        }
+
+        builder.show()
+    }
+
+
+
+    private fun getCusName(userId: String) {
+        FirebaseDBManager.getCustomerInfo(userId) { customer ->
+            if (customer != null) {
+                requireActivity().runOnUiThread {
+                    val name = customer.fullName
+                    txtGreeting.text = "Hi, $name"
                 }
             }
+        }
     }
 }

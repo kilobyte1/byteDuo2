@@ -6,7 +6,6 @@
     android:layout_height="match_parent"
     tools:context=".View.AccountFragment">
 
-    <!-- Logout Button -->
     <Button
         android:id="@+id/btnAdminLogout"
         android:layout_width="wrap_content"
@@ -16,18 +15,16 @@
         android:layout_alignParentEnd="true"
         android:layout_margin="16dp" />
 
-    <!-- Profile Image -->
     <ImageView
         android:id="@+id/imageView5"
-        android:layout_width="186dp"
-        android:layout_height="188dp"
+        android:layout_width="168dp"
+        android:layout_height="138dp"
         android:layout_below="@id/btnAdminLogout"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:paddingBottom="20dp"
         android:src="@drawable/acct" />
 
-    <!-- Admin Name -->
     <TextView
         android:id="@+id/txtAdminName"
         android:layout_width="wrap_content"
@@ -39,7 +36,6 @@
         android:text="Name"
         android:textSize="18sp" />
 
-    <!-- Update Details -->
     <TextView
         android:id="@+id/txtUpdateDetails"
         android:layout_width="wrap_content"
@@ -51,19 +47,38 @@
         android:textColor="@android:color/holo_blue_dark"
         android:textStyle="bold" />
 
-    <!-- Update Section Separator -->
+    <TextView
+        android:id="@+id/txtUpdateEmail"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/txtUpdateDetails"
+        android:layout_marginTop="8dp"
+        android:layout_marginStart="16dp"
+        android:text="Update Email"
+        android:textColor="@android:color/holo_blue_dark"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/txtChangePassword"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/txtUpdateEmail"
+        android:layout_marginTop="8dp"
+        android:layout_marginStart="16dp"
+        android:text="Change Password"
+        android:textColor="@android:color/holo_blue_dark"
+        android:textStyle="bold" />
+
     <TextView
         android:id="@+id/UpdateSection"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:gravity="center"
         android:text="------------------------------------ Update Menu Items --------------------------------------"
         android:textColor="@color/black"
-        android:gravity="center"
-        android:paddingTop="30dp"
         android:paddingBottom="30dp"
-        android:layout_below="@+id/txtUpdateDetails" />
+        android:layout_below="@+id/txtChangePassword" />
 
-    <!-- Add Menu Item Button -->
     <Button
         android:id="@+id/btnAddItem"
         android:layout_width="129dp"
@@ -76,7 +91,6 @@
         android:background="@drawable/rounded_btn"
         android:text="Add Menu Item" />
 
-    <!-- Note -->
     <TextView
         android:id="@+id/note"
         android:layout_width="wrap_content"
@@ -96,7 +110,6 @@
         android:layout_marginBottom="30dp"
         android:layout_below="@+id/btnAddItem" />
 
-    <!-- Spinner -->
     <Spinner
         android:id="@+id/removeSpinner"
         android:layout_width="wrap_content"
@@ -108,7 +121,6 @@
         android:textColor="#FF8E542F"
         android:background="@drawable/stroke" />
 
-    <!-- Edit and Remove Buttons -->
     <LinearLayout
         android:id="@+id/editRemove"
         android:layout_width="wrap_content"

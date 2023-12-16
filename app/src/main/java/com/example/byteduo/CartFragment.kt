@@ -7,15 +7,13 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
-import androidx.navigation.fragment.findNavController
+import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.byteduo.adapter.CartAdapter
-import com.example.byteduo.adapter.MenuItemsAdapter
 import com.example.byteduo.model.CartItem
+import com.example.byteduo.model.FirebaseDBManager
 import com.example.byteduo.model.FirebaseDBManager.getCurrentUserId
-import com.example.byteduo.model.MenuItems
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
@@ -32,7 +30,7 @@ private lateinit var fees: TextView
 private lateinit var btnMakePayment: Button
 
 
-class CartFragment : Fragment() {
+class CartFragment : Fragment(), ClearCartCallback {
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -63,11 +61,20 @@ class CartFragment : Fragment() {
         fees = view.findViewById(R.id.txtFee)
         btnMakePayment = view.findViewById(R.id.btnMakePayment)
 
-        btnMakePayment.setOnClickListener(){
-            // Show the dialog
-            val paymentOptionsDialog = PaymentOptionsDialogFragment()
-            paymentOptionsDialog.show(childFragmentManager, "PaymentOptionsDialogFragment")
+        btnMakePayment.setOnClickListener {
+            // Check if the cart is not empty
+            isCartNotEmpty { isNotEmpty ->
+                if (isNotEmpty) {
+                    // Show the payment options dialog only if the cart is not empty
+                    val paymentOptionsDialog = PaymentOptionsDialogFragment(this)
+                    paymentOptionsDialog.show(childFragmentManager, "PaymentOptionsDialogFragment")
+                } else {
+                    // Show a message or take appropriate action if the cart is empty
+                    Toast.makeText(requireContext(),"Your cart is empty. Add items before making a payment.",Toast.LENGTH_SHORT).show()
+                }
+            }
         }
+
 
 
         return view
@@ -151,6 +158,48 @@ class CartFragment : Fragment() {
         subTotal.text = formattedSubTotal
 
         total.text = String.format("Total: £%.2f", num)
+    }
+
+
+     override fun onCartCleared() {
+        val userId = getCurrentUserId()
+
+        if (userId != null) {
+            FirebaseDBManager.clearUserCart(userId)
+        }
+    }
+
+     fun isCartNotEmpty(callback: (Boolean) -> Unit) {
+        val userId = getCurrentUserId()
+
+        if (userId != null) {
+            val cartReference = FirebaseDatabase.getInstance().getReference("Cart").child(userId)
+
+            cartReference.addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    // Invoke the callback with the result
+                    callback(snapshot.exists() && snapshot.childrenCount > 0)
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    // Handle error
+                    callback(false) // Return false in case of an error
+                }
+            })
+        } else {
+            // Handle the case where userId is null
+            callback(false)
+        }
+    }
+
+
+
+
+    companion object {
+        fun total(cartItems: List<CartItem>): Double? {
+            val num = cartItems.sumByDouble { (it.menuItem?.itemPrice ?: 0.0) * it.quantity!! }
+            return num
+        }
     }
 
 
