@@ -6,4 +6,5 @@ data class Order(
     val orderTime: String? = null,
     val orderStatus: String? = null,
     val orderItems: List<CartItem>?=null,
+    val paymentType: String? = null
 )

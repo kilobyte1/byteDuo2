@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
-             xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/admin_nav_graph"
     app:startDestination="@id/adminHomeFragment">
@@ -23,5 +23,10 @@
         android:id="@+id/adminAccountFragment"
         android:name="com.example.byteduo.View.AdminAccountFragment"
         android:label="AdminAccountFragment" />
+    <fragment
+        android:id="@+id/manageOrders"
+        android:name="com.example.byteduo.ManageOrders"
+        android:label="fragment_manage_orders"
+        tools:layout="@layout/fragment_manage_orders" />
 
 </navigation>

@@ -16,6 +16,5 @@ class AdminMain : AppCompatActivity() {
         val bottomNavigation = findViewById<BottomNavigationView>(R.id.admin_btm_nav)
         val navController = Navigation.findNavController(this, R.id.admin_nav_host_fragment)
         NavigationUI.setupWithNavController(bottomNavigation, navController)
-
     }
 }

@@ -72,6 +72,7 @@ dependencies {
     implementation("androidx.compose.ui:ui-graphics")
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.compose.material3:material3")
+    implementation("com.google.firebase:firebase-messaging-ktx:23.4.0")
 
 
 
@@ -103,6 +104,9 @@ dependencies {
     implementation ("com.github.bumptech.glide:glide:4.16.0")
 
     implementation ("androidx.recyclerview:recyclerview:1.2.1")
+
+    implementation ("com.google.firebase:firebase-messaging:22.0.0")
+
 
 
 }

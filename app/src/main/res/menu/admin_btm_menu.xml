@@ -5,6 +5,7 @@
         <item android:id="@+id/admin_nav_graph"
                 android:icon="@drawable/home"
                 android:title="Home"/>
+
         <item
             android:id="@+id/cartFragment"
             android:title="Cart"
@@ -16,9 +17,13 @@
             android:icon="@drawable/order" />
 
         <item
+            android:id="@+id/manageOrders"
+            android:title = "Customer Orders"
+            android:icon="@drawable/manage_icon"/>
+
+        <item
             android:id="@+id/adminAccountFragment"
             android:title="Account"
             android:icon="@drawable/acct" />
-
 
 </menu>

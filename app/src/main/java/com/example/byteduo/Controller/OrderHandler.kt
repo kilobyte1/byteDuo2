@@ -24,6 +24,22 @@ class OrderHandler {
     companion object {
         private lateinit var ordersDatabaseReference: DatabaseReference
 
+
+        fun updateOrderStatus(orderId: String, newStatus: String, callback: () -> Unit) {
+            val orderReference = FirebaseDatabase.getInstance().getReference("Orders").child(orderId)
+
+            // Assuming "orderStatus" is the field in your Order class representing the order status
+            orderReference.child("orderStatus").setValue(newStatus)
+                .addOnSuccessListener {
+                    // Handle success, e.g., show a success message
+                    callback()
+                }
+                .addOnFailureListener {
+                    // Handle the failure
+                }
+        }
+
+
         fun createOrderAndDetails(cartItems: List<CartItem>,paymentType: String, callback: (String) -> Unit) {
             val userId = FirebaseAuth.getInstance().currentUser?.uid
 
@@ -43,8 +59,9 @@ class OrderHandler {
                             orderId = orderId,
                             cusId = userId,
                             orderTime = orderTime,
-                            orderStatus = "Processing",
-                            orderItems = cartItems
+                            orderStatus = "Preparing",
+                            orderItems = cartItems,
+                            paymentType = paymentType
                         )
 
                         // Save the order to the database
@@ -186,5 +203,29 @@ class OrderHandler {
                 }
             })
         }
+
+        fun retrieveAllOrders(callback: (List<Order>) -> Unit) {
+            val allOrdersReference = databaseReference
+
+            allOrdersReference.addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    val orders = mutableListOf<Order>()
+
+                    for (orderSnapshot in snapshot.children) {
+                        val order = orderSnapshot.getValue(Order::class.java)
+                        order?.let {
+                            orders.add(it)
+                        }
+                    }
+
+                    callback(orders)
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    // Handle the error
+                }
+            })
+        }
+
     }
 }
