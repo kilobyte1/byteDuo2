@@ -30,7 +30,6 @@ import com.google.firebase.database.ValueEventListener
 
 class CusHomeFragment : Fragment() {
 
-    private lateinit var databaseReference: DatabaseReference
     private lateinit var menuListView: ListView
     private lateinit var menuAdapter: MenuAdapter
     private lateinit var cartTopCounter: TextView

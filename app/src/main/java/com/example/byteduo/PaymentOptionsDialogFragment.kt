@@ -46,12 +46,13 @@ class PaymentOptionsDialogFragment(private val clearCartCallback: ClearCartCallb
                 //create the order and add to the database
                 // Call the createOrderInDatabase method from OrderHandler
 
+
                 //this is not supposed to be here
                 showCashPaymentDialog()
 
                 retrieveCartItemsFromDatabase { cartItems ->
                     // Call the createOrderAndDetails method from OrderHandler
-                    OrderHandler.createOrderAndDetails(cartItems, "Cash") { orderId ->
+                    OrderHandler.createOrderAndDetails(cartItems,"Cash") { orderId ->
 
                     }
                 }

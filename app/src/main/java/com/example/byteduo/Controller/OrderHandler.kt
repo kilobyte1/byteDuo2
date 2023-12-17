@@ -40,7 +40,11 @@ class OrderHandler {
         }
 
 
-        fun createOrderAndDetails(cartItems: List<CartItem>,paymentType: String, callback: (String) -> Unit) {
+
+
+
+
+        fun createOrderAndDetails(cartItems: List<CartItem>,paymentType: String,callback: (String) -> Unit) {
             val userId = FirebaseAuth.getInstance().currentUser?.uid
 
             if (userId != null) {
@@ -61,7 +65,7 @@ class OrderHandler {
                             orderTime = orderTime,
                             orderStatus = "Preparing",
                             orderItems = cartItems,
-                            paymentType = paymentType
+                            paymentType = paymentType,
                         )
 
                         // Save the order to the database
@@ -179,7 +183,7 @@ class OrderHandler {
         }
 
 
-        val databaseReference = FirebaseDatabase.getInstance().getReference("Orders")
+        var databaseReference = FirebaseDatabase.getInstance().getReference("Orders")
 
         fun retrieveOrdersForUser(userId: String, callback: (List<Order>) -> Unit) {
             val userOrdersReference = databaseReference.orderByChild("cusId").equalTo(userId)

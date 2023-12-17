@@ -5,6 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.example.byteduo.Controller.OrderHandler
 import com.example.byteduo.R
 import com.example.byteduo.model.Order
 
@@ -15,6 +16,7 @@ class OrdersAdapter(private val orders: List<Order>) : RecyclerView.Adapter<Orde
         val orderDateTextView: TextView = itemView.findViewById(R.id.orderDateTextView)
         val orderStatusTextView: TextView = itemView.findViewById(R.id.orderStatusTextView)
         val itemNameAndQtyTextView: TextView = itemView.findViewById(R.id.itemNameAndQtyTextView)
+        val totalCost: TextView = itemView.findViewById(R.id.totalCost)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): OrderViewHolder {
@@ -30,8 +32,19 @@ class OrdersAdapter(private val orders: List<Order>) : RecyclerView.Adapter<Orde
         holder.orderDateTextView.text = " Date: ${currentOrder.orderTime}"
         holder.orderStatusTextView.text = " Status: ${currentOrder.orderStatus}"
 
+
+
+        //use a call back to get the total // not storing it in the database
+        val total = currentOrder.orderItems?.sumByDouble { cartItem ->
+            val quantity = cartItem.quantity ?: 0
+            val price = cartItem.menuItem?.itemPrice ?: 0.0
+            quantity * price
+        } ?: 0.0
+
+        holder.totalCost.text = "Total: £$total"
+
         val itemsNameAndQtyString = currentOrder.orderItems?.joinToString("\n") { cartItem ->
-            "Item: ${cartItem.menuItem?.itemName} - Qty: ${cartItem.quantity}"
+            "Item: ${cartItem.menuItem?.itemName} - Qty: ${cartItem.quantity} - Price: £${cartItem.total}"
         }
         // Bind data to TextViews
         holder.itemNameAndQtyTextView.text = itemsNameAndQtyString

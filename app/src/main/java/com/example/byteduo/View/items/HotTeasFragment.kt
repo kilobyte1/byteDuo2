@@ -93,6 +93,8 @@ class HotTeasFragment : Fragment() {
             val cartItem = CartItem(
                 menuItem = menuItem,
                 quantity = quantity,
+                total = menuItem.itemPrice?.times(quantity) ?:0.0
+
             )
             // Store the cartItem in the database or perform other actions as needed
             storeCartItemInDatabase(cartItem)

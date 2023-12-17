@@ -7,4 +7,6 @@
     <string name="change_image">Change Image</string>
     <string name="title_activity_order">OrderActivity</string>
 
+    <string name="order_status_prompt">Select Order Status</string>
+
 </resources>

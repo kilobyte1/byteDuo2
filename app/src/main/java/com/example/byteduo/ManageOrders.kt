@@ -14,7 +14,6 @@ import com.example.byteduo.model.Order
 
 class ManageOrders : Fragment() {
 
-        private lateinit var ordersList: List<Order>
         private lateinit var recyclerView: RecyclerView
         private lateinit var ordersAdapter: ManageOrdersAdapter
 
