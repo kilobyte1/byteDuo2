@@ -1,13 +1,13 @@
 package com.example.byteduo.View.OrdersAdapter
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.example.byteduo.Controller.OrderHandler
 import com.example.byteduo.R
-import com.example.byteduo.model.Order
+import com.example.byteduo.Model.Order
 
 class OrdersAdapter(private val orders: List<Order>) : RecyclerView.Adapter<OrdersAdapter.OrderViewHolder>() {
 
@@ -32,6 +32,7 @@ class OrdersAdapter(private val orders: List<Order>) : RecyclerView.Adapter<Orde
         holder.orderDateTextView.text = " Date: ${currentOrder.orderTime}"
         holder.orderStatusTextView.text = " Status: ${currentOrder.orderStatus}"
 
+        Log.d("OrdersAdapter", "Order ID: ${currentOrder.orderId}")
 
 
         //use a call back to get the total // not storing it in the database
@@ -49,17 +50,6 @@ class OrdersAdapter(private val orders: List<Order>) : RecyclerView.Adapter<Orde
         // Bind data to TextViews
         holder.itemNameAndQtyTextView.text = itemsNameAndQtyString
 
-
-
-        // Fetch OrderDetails using the cusId from the database reference
-//        retrieveOrderDetailsForUser(currentOrder.cusId ?: "") { orderDetailsList ->
-//            // Set data for the inner RecyclerView using the setData method in OrderedItemsAdapter
-//            holder.orderedItemsRecyclerView.adapter?.let {
-//                if (it is OrderedItemsAdapter) {
-//                    it.setData(orderDetailsList)
-//                }
-//            }
-//        }
     }
 
     override fun getItemCount(): Int {

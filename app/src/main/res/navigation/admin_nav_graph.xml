@@ -12,12 +12,12 @@
         tools:layout="@layout/fragment_orders" />
     <fragment
         android:id="@+id/adminHomeFragment"
-        android:name="com.example.byteduo.AdminHomeFragment"
+        android:name="com.example.byteduo.View.AdminHomeFragment"
         android:label="fragment_admin_home"
         tools:layout="@layout/fragment_admin_home" />
     <fragment
         android:id="@+id/cartFragment"
-        android:name="com.example.byteduo.CartFragment"
+        android:name="com.example.byteduo.View.CartFragment"
         android:label="CartFragment" />
     <fragment
         android:id="@+id/adminAccountFragment"
@@ -25,7 +25,7 @@
         android:label="AdminAccountFragment" />
     <fragment
         android:id="@+id/manageOrders"
-        android:name="com.example.byteduo.ManageOrders"
+        android:name="com.example.byteduo.View.ManageOrders"
         android:label="fragment_manage_orders"
         tools:layout="@layout/fragment_manage_orders" />
 

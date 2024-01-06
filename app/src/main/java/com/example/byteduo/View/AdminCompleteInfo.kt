@@ -5,15 +5,12 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import android.util.Patterns
 import android.view.Window
 import android.widget.Button
 import android.widget.Toast
 import com.example.byteduo.Controller.AdminMain
 import com.example.byteduo.Controller.AdminSignUpController
-import com.example.byteduo.Controller.CustomerMain
 import com.example.byteduo.R
-import com.example.byteduo.model.FirebaseDBManager
 import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot

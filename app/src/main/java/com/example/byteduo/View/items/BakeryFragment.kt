@@ -9,11 +9,12 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.byteduo.Controller.CartController
 import com.example.byteduo.R
-import com.example.byteduo.adapter.MenuItemsAdapter
-import com.example.byteduo.model.CartItem
-import com.example.byteduo.model.FirebaseDBManager
-import com.example.byteduo.model.MenuItems
+import com.example.byteduo.View.MenuItemsAdapter
+import com.example.byteduo.Model.CartItem
+import com.example.byteduo.Model.FirebaseDBManager
+import com.example.byteduo.Model.MenuItems
 import com.google.firebase.database.*
 
 class BakeryFragment : Fragment() {
@@ -22,6 +23,8 @@ class BakeryFragment : Fragment() {
     private lateinit var databaseReference: DatabaseReference
     private lateinit var adapter: MenuItemsAdapter
 
+    private val menuItems = MenuItems()
+    private val cartController= CartController()
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -31,7 +34,7 @@ class BakeryFragment : Fragment() {
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
         adapter = MenuItemsAdapter ({ menuItem,itemCount ->
             // Handle the "Add" button click here
-            handleAddToCart(menuItem, itemCount)
+            cartController.handleAddToCart(menuItem, itemCount)
         },
         onUpdateCartListener = {
             // Handle cart update here
@@ -50,55 +53,9 @@ class BakeryFragment : Fragment() {
     }
 
     private fun retrieveAndDisplayItems(category: String) {
-        databaseReference.addValueEventListener(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                val items = mutableListOf<MenuItems>()
-
-                for (itemSnapshot in snapshot.children) {
-                    val menuItem = itemSnapshot.getValue(MenuItems::class.java)
-                    if (menuItem != null && menuItem.category == category) {
-                        items.add(menuItem)
-                    }
-                }
-
-                // Update the adapter with the filtered items
-                adapter.setItems(items)
-            }
-
-            override fun onCancelled(error: DatabaseError) {
-                // Handle error
-            }
-        })
-    }
-
-    // Handle the "Add" button click by creating a CartItem and storing it in the database
-    private fun handleAddToCart(menuItem: MenuItems,quantity: Int) {
-        if (quantity > 0) {
-            // Create a CartItem object with the necessary details
-            val cartItem = CartItem(
-                menuItem = menuItem,
-                quantity = quantity,
-                total = menuItem.itemPrice?.times(quantity) ?:0.0
-            )
-            // Store the cartItem in the database or perform other actions as needed
-            storeCartItemInDatabase(cartItem)
-            Toast.makeText(requireContext(), "Item added", Toast.LENGTH_SHORT).show()
-
-        } else {
-
-            // Show a toast message if quantity is zero
-            Toast.makeText(requireContext(), "Quantity cannot be 0", Toast.LENGTH_SHORT).show()
-        }
-    }
-    private fun storeCartItemInDatabase(cartItem: CartItem) {
-
-        val userId = FirebaseDBManager.getCurrentUserId()
-
-        if (userId != null) {
-            databaseReference = FirebaseDatabase.getInstance().getReference("Cart").child(userId)
-
-            databaseReference.push().setValue(cartItem)
-
+        menuItems.retrieveItemsByCategory(category) { items ->
+            // Update the adapter with the retrieved items
+            adapter.setItems(items)
         }
     }
 }

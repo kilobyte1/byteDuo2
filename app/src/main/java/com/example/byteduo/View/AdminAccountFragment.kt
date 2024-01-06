@@ -1,12 +1,13 @@
 package com.example.byteduo.View
 
 import android.app.AlertDialog
+import android.app.Dialog
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
-import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.view.Window
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Button
@@ -15,15 +16,16 @@ import android.widget.Spinner
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.byteduo.Controller.AccountController
 import com.example.byteduo.Controller.Loading
-import com.example.byteduo.EditItemDialogFragment
 import com.example.byteduo.R
-import com.example.byteduo.adapter.AddItemDialogFragment
-import com.example.byteduo.model.Admin
-import com.example.byteduo.model.Customer
-import com.example.byteduo.model.FirebaseDBManager
-import com.example.byteduo.model.MenuItems
+import com.example.byteduo.Model.Admin
+import com.example.byteduo.Model.CustomerReview
+import com.example.byteduo.Model.FirebaseDBManager
+import com.example.byteduo.Model.MenuItems
+import com.example.byteduo.View.OrdersAdapter.ReviewsAdapter
 import com.google.firebase.auth.FirebaseAuth
 
 class AdminAccountFragment : Fragment() {
@@ -38,6 +40,10 @@ class AdminAccountFragment : Fragment() {
     private lateinit var updateDetails: TextView
     private lateinit var txtUpdateEmail: TextView
     private lateinit var txtChangePassword: TextView
+    private lateinit var btnViewReview: Button
+
+
+    private val accountController = AccountController()
 
 
     override fun onCreateView(
@@ -46,6 +52,7 @@ class AdminAccountFragment : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_admin_account, container, false)
+
 
         // Find the logout button directly without null check
         val btnLogout = view.findViewById<Button>(R.id.btnAdminLogout)
@@ -56,6 +63,7 @@ class AdminAccountFragment : Fragment() {
         updateDetails = view.findViewById(R.id.txtUpdateDetails)
         txtUpdateEmail = view.findViewById(R.id.txtUpdateEmail)
         txtChangePassword = view.findViewById(R.id.txtChangePassword)
+        btnViewReview = view.findViewById(R.id.btnViewReviews)
 
 
         // Initialize menuItemsAdapter
@@ -70,13 +78,13 @@ class AdminAccountFragment : Fragment() {
         }
 
         updateDetails.setOnClickListener(){
-            // Use the getCurrentUserId or any other method to get the current user's ID
+            // Use the getCurrentUserId
             val userId = FirebaseDBManager.getCurrentUserId()
 
             // Fetch admin details using the AccountController
             if (userId != null) {
                 FirebaseDBManager.getAdminInfo(userId) { adminDetails ->
-                    // Now, you have the customer details, open the dialog form
+
                     showUpdateDetailsDialog(adminDetails)
                 }
             }
@@ -104,7 +112,7 @@ class AdminAccountFragment : Fragment() {
         val accountController = AccountController()
         // Set a click listener for the logout button
         btnLogout.setOnClickListener {
-            // Call the logout function in the controller
+
             accountController.onLogout(requireContext())
         }
 
@@ -124,55 +132,74 @@ class AdminAccountFragment : Fragment() {
             handleSelectedItem()
         }
 
+
+
+        btnViewReview.setOnClickListener {
+            FirebaseDBManager.getAllReviews { reviews ->
+                // Create a dialog to display reviews
+                showReviewsDialog(reviews)
+            }
+        }
+
         // Return the inflated view
         return view
     }
 
+    private fun showReviewsDialog(reviews: List<CustomerReview>) {
+        val dialog = Dialog(requireContext())
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+
+        // Inflate the dialog layout
+        val dialogView = layoutInflater.inflate(R.layout.dialog_reviews, null)
+        dialog.setContentView(dialogView)
+
+        // Find the RecyclerView inside the dialog layout
+        val recyclerViewReviews = dialogView.findViewById<RecyclerView>(R.id.recyclerViewReview)
+
+        // Check if recyclerViewReviews is not null before setting the layout manager
+        recyclerViewReviews?.layoutManager = LinearLayoutManager(requireContext())
+
+        val reviewsAdapter = ReviewsAdapter(reviews)
+        recyclerViewReviews.adapter = reviewsAdapter
+
+        dialog.show()
+    }
+
+
+
     private fun showChangePasswordDialog() {
+
         val builder = AlertDialog.Builder(requireContext())
         val inflater = LayoutInflater.from(requireContext())
-        val dialogView = inflater.inflate(R.layout.change_admin_password_dialog, null)
+        val dialogView = inflater.inflate(R.layout.change_password_dialog, null)
 
-        // Initialize and set other views
-        val newAdminPasswordEditText = dialogView.findViewById<EditText>(R.id.etAdminNewPassword)
-        val confirmAdminPasswordEditText = dialogView.findViewById<EditText>(R.id.etAdminConfirmPassword)
+
+        val newPasswordEditText = dialogView.findViewById<EditText>(R.id.etNewPassword)
+        val confirmPasswordEditText = dialogView.findViewById<EditText>(R.id.etConfirmPassword)
 
         builder.setView(dialogView)
-        //builder.setTitle("Change Password")
+            .setPositiveButton("Change Password") { dialog, _ ->
+                val newPassword = newPasswordEditText.text.toString()
+                val confirmPassword = confirmPasswordEditText.text.toString()
 
-        // Positive button for changing password
-        builder.setPositiveButton("Change Password") { dialog, _ ->
+                accountController.changePassword(requireContext(), newPassword, confirmPassword) { success, errorMessage ->
+                    if (success) {
+                    } else {
+                        // Password change failed, handle the error
+                        Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_SHORT).show()
+                    }
+                }
 
-            val newPassword = newAdminPasswordEditText.text.toString()
-            val confirmPassword = confirmAdminPasswordEditText.text.toString()
-
-            // Validate passwords
-            if (newPassword.isNotEmpty() && confirmPassword.isNotEmpty() && newPassword == confirmPassword) {
-                // Passwords match, proceed with changing the password
-                // Show the Loading dialog
-                val waitDialog = Loading.showWaitDialog(requireContext())
-
-                // Call the function to change the password
-                val accountController = AccountController()
-                accountController.changePassword(requireContext(),newPassword)
-
-                waitDialog.dismiss()
-
-            } else {
-                // Passwords don't match
-                //Toast.makeText(this,"Passwords do not match")
+                dialog.dismiss()
             }
-
-            dialog.dismiss()
-        }
-
-        // Negative button for canceling
-        builder.setNegativeButton("Cancel") { dialog, _ ->
-            dialog.dismiss()
-        }
-
-        builder.show()
+            .setNegativeButton("Cancel") { dialog, _ ->
+                dialog.dismiss()
+            }
+            .show()
     }
+
+
+
 
     private fun showUpdateDetailsDialog(adminDetails: Admin?) {
 
@@ -363,6 +390,8 @@ class AdminAccountFragment : Fragment() {
             }
         }
     }
+
+
 
 
 

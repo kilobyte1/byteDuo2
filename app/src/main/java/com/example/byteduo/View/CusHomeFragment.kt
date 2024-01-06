@@ -17,15 +17,9 @@ import com.example.byteduo.View.items.DrinksFragment
 import com.example.byteduo.View.items.HotCoffeeFragment
 import com.example.byteduo.View.items.HotTeasFragment
 import com.example.byteduo.View.items.IceTeasFragment
-import com.example.byteduo.adapter.MenuAdapter
-import com.example.byteduo.model.Customer
-import com.example.byteduo.model.FirebaseDBManager
+import com.example.byteduo.Model.FirebaseDBManager
+import com.example.byteduo.Model.MenuItemsCategoriesProvider
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
 
 
 class CusHomeFragment : Fragment() {
@@ -35,7 +29,7 @@ class CusHomeFragment : Fragment() {
     private lateinit var cartTopCounter: TextView
     private lateinit var userName: TextView
 
-    private val menuItems = listOf("Hot Coffee", "Ice Teas", "Hot Teas", "Bakery", "Drinks")
+    private val menuItems = MenuItemsCategoriesProvider.menuItemsCategories
     private val fragments = listOf(HotCoffeeFragment(), IceTeasFragment(), HotTeasFragment(), BakeryFragment(), DrinksFragment())
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {

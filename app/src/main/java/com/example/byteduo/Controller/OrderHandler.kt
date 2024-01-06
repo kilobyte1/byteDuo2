@@ -1,11 +1,11 @@
 package com.example.byteduo.Controller
 
 import android.util.Log
-import com.example.byteduo.CartFragment
-import com.example.byteduo.model.CartItem
-import com.example.byteduo.model.Order
-import com.example.byteduo.model.OrderDetails
-import com.example.byteduo.model.Payment
+import com.example.byteduo.View.CartFragment
+import com.example.byteduo.Model.CartItem
+import com.example.byteduo.Model.Order
+import com.example.byteduo.Model.OrderDetails
+import com.example.byteduo.Model.Payment
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -230,6 +230,7 @@ class OrderHandler {
                 }
             })
         }
+
 
     }
 }

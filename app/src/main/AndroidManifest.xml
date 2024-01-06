@@ -20,11 +20,11 @@
 
 
         <activity
-            android:name=".EditItemDialogFragment"
+            android:name=".View.EditItemDialogFragment"
             android:exported="false" />
         <activity android:name=".View.CardPaymentActivity" />
         <activity
-            android:name=".adapter.CartAdapter"
+            android:name=".View.CartAdapter"
             android:exported="false" />
         <activity
             android:name=".View.AdminCompleteInfo"

@@ -1,8 +1,8 @@
-package com.example.byteduo.model
+package com.example.byteduo.Model
 
 import android.os.Parcel
 import android.os.Parcelable
-import android.widget.Toast
+import com.google.android.gms.tasks.Task
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
@@ -59,9 +59,16 @@ data class MenuItems(
     }
 
     // To update an item
-    fun updateItem(itemName: String, updatedMenuItem: MenuItems) {
-        val databaseReference = FirebaseDatabase.getInstance().getReference("MenuItems").child(itemName)
-        databaseReference.setValue(updatedMenuItem)
+    fun updateMenuItem(updatedMenuItem: MenuItems): Task<Void> {
+        val itemId = updatedMenuItem.itemId
+
+        if (itemId != null) {
+            val databaseReference = FirebaseDatabase.getInstance().getReference("MenuItems").child(itemId)
+            return databaseReference.setValue(updatedMenuItem)
+        } else {
+            // You may want to handle this differently based on your requirements
+            throw IllegalArgumentException("Invalid item ID")
+        }
     }
 
     // To delete an item
@@ -81,6 +88,32 @@ data class MenuItems(
                         }
                     }
                 }
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {
+                // Handle the error if necessary
+            }
+        })
+    }
+
+    fun retrieveItemsByCategory(category: String, callback: (List<MenuItems>) -> Unit
+    ) {
+        val databaseReference = FirebaseDatabase.getInstance().getReference("MenuItems")
+        // Query items by category
+        val query = databaseReference.orderByChild("category").equalTo(category)
+
+        query.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                val items = mutableListOf<MenuItems>()
+
+                for (itemSnapshot in dataSnapshot.children) {
+                    val menuItem = itemSnapshot.getValue(MenuItems::class.java)
+                    if (menuItem != null) {
+                        items.add(menuItem)
+                    }
+                }
+                // Invoke the callback with the retrieved items
+                callback.invoke(items)
             }
 
             override fun onCancelled(databaseError: DatabaseError) {

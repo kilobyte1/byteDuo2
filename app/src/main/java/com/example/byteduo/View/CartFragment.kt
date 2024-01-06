@@ -1,36 +1,35 @@
-package com.example.byteduo
+package com.example.byteduo.View
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.byteduo.adapter.CartAdapter
-import com.example.byteduo.model.CartItem
-import com.example.byteduo.model.FirebaseDBManager
-import com.example.byteduo.model.FirebaseDBManager.getCurrentUserId
+import com.example.byteduo.ClearCartCallback
+import com.example.byteduo.Model.CartItem
+import com.example.byteduo.Model.FirebaseDBManager
+import com.example.byteduo.R
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 
-private lateinit var cartRecyclerView: RecyclerView
-private lateinit var cartAdapter: CartAdapter
-private lateinit var userCartReference: DatabaseReference
-private lateinit var message: TextView
-private lateinit var subTotal: TextView
-private lateinit var total: TextView
-private lateinit var fees: TextView
-private lateinit var btnMakePayment: Button
-
-
 class CartFragment : Fragment(), ClearCartCallback {
+
+    private lateinit var cartRecyclerView: RecyclerView
+    private lateinit var cartAdapter: CartAdapter
+    private lateinit var userCartReference: DatabaseReference
+    private lateinit var message: TextView
+    private lateinit var subTotal: TextView
+    private lateinit var total: TextView
+    private lateinit var fees: TextView
+    private lateinit var btnMakePayment: Button
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -42,13 +41,13 @@ class CartFragment : Fragment(), ClearCartCallback {
         cartRecyclerView = view.findViewById(R.id.cartRecyclerView)
         //link the recycler with the adapter
         cartRecyclerView.layoutManager= LinearLayoutManager(requireContext())
-        cartAdapter = CartAdapter {cartItem ->
+        cartAdapter = CartAdapter { cartItem ->
 
             removeItemFromCart(cartItem)
 
         }
 
-        val userId = getCurrentUserId()
+        val userId = FirebaseDBManager.getCurrentUserId()
         if (userId != null){
             userCartReference = FirebaseDatabase.getInstance().getReference("Cart").child(userId)
             cartRecyclerView.adapter = cartAdapter
@@ -70,18 +69,19 @@ class CartFragment : Fragment(), ClearCartCallback {
                     paymentOptionsDialog.show(childFragmentManager, "PaymentOptionsDialogFragment")
                 } else {
                     // Show a message or take appropriate action if the cart is empty
-                    Toast.makeText(requireContext(),"Your cart is empty. Add items before making a payment.",Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        requireContext(),
+                        "Your cart is empty. Add items before making a payment.",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
             }
         }
-
-
-
         return view
     }
 
     private fun removeItemFromCart(cartItem: CartItem) {
-        val userId = getCurrentUserId()
+        val userId = FirebaseDBManager.getCurrentUserId()
 
         if (userId != null) {
             val cartReference = FirebaseDatabase.getInstance().getReference("Cart").child(userId)
@@ -103,7 +103,6 @@ class CartFragment : Fragment(), ClearCartCallback {
             })
         }
     }
-
 
     private fun fetchCartData() {
         // Attach a ValueEventListener to get real-time updates
@@ -146,6 +145,7 @@ class CartFragment : Fragment(), ClearCartCallback {
         })
     }
 
+    // Method to update total values based on cart items
     private fun updateTotals(cartItems: List<CartItem>) {
 
         // Calculate subtotal
@@ -160,17 +160,18 @@ class CartFragment : Fragment(), ClearCartCallback {
         total.text = String.format("Total: £%.2f", num)
     }
 
-
+    // Override the onCartCleared method from ClearCartCallback interface
      override fun onCartCleared() {
-        val userId = getCurrentUserId()
+        val userId = FirebaseDBManager.getCurrentUserId()
 
         if (userId != null) {
             FirebaseDBManager.clearUserCart(userId)
         }
     }
 
-     fun isCartNotEmpty(callback: (Boolean) -> Unit) {
-        val userId = getCurrentUserId()
+    // Method to check if the cart is not empty
+    fun isCartNotEmpty(callback: (Boolean) -> Unit) {
+        val userId = FirebaseDBManager.getCurrentUserId()
 
         if (userId != null) {
             val cartReference = FirebaseDatabase.getInstance().getReference("Cart").child(userId)
@@ -194,7 +195,7 @@ class CartFragment : Fragment(), ClearCartCallback {
 
 
 
-
+    // Companion object containing a total calculation method
     companion object {
         fun total(cartItems: List<CartItem>): Double? {
             val num = cartItems.sumByDouble { (it.menuItem?.itemPrice ?: 0.0) * it.quantity!! }

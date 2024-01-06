@@ -1,4 +1,4 @@
-package com.example.byteduo
+package com.example.byteduo.View
 
 import android.app.Dialog
 import android.content.Intent
@@ -12,10 +12,9 @@ import android.widget.RadioButton
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
-import com.example.byteduo.Controller.Loading
+import com.example.byteduo.ClearCartCallback
 import com.example.byteduo.Controller.OrderHandler
-import com.example.byteduo.Controller.OrderHandler.Companion.retrieveCartItemsFromDatabase
-import com.example.byteduo.View.CardPaymentActivity
+import com.example.byteduo.R
 
 class PaymentOptionsDialogFragment(private val clearCartCallback: ClearCartCallback) : DialogFragment() {
 
@@ -44,17 +43,13 @@ class PaymentOptionsDialogFragment(private val clearCartCallback: ClearCartCallb
             // If "Pay by Cash" is selected, show a dialog and create an order in the database
             if (cashRadioButton.isChecked) {
                 //create the order and add to the database
-                // Call the createOrderInDatabase method from OrderHandler
 
-
-                //this is not supposed to be here
-                showCashPaymentDialog()
-
-                retrieveCartItemsFromDatabase { cartItems ->
+                OrderHandler.retrieveCartItemsFromDatabase { cartItems ->
                     // Call the createOrderAndDetails method from OrderHandler
-                    OrderHandler.createOrderAndDetails(cartItems,"Cash") { orderId ->
-
+                    OrderHandler.createOrderAndDetails(cartItems, "Cash") { orderId ->
                     }
+                    showCashPaymentDialog()
+                    clearCartCallback.onCartCleared()
                 }
 
             } else if(cardRadioButton.isChecked) {
@@ -76,37 +71,24 @@ class PaymentOptionsDialogFragment(private val clearCartCallback: ClearCartCallb
         return dialog
     }
 
-
-
-
-
-
-
     private fun showCashPaymentDialog() {
         val context = context
         if (context != null && isAdded) {
             //using the second dialog which uses require contect since this is not am activity
             //val waitDialog = Loading.showWaitDialog2(requireContext())
-
-
             val dialogMessage =
                 "Order placed successfully. You have chosen to pay by cash. " +
                         "Please pay at the counter when picking up your order. Thank you."
             //waitDialog.dismiss()
-
             AlertDialog.Builder(requireContext())
                 .setMessage(dialogMessage)
                 .setPositiveButton("OK") { dialog, _ ->
-                    clearCartCallback.onCartCleared()
                     dialog.dismiss() }
                 .show()
         } else {
             Log.e("PaymentDialog", "Fragment is not added or context is null.")
         }
     }
-
-
-
     private fun cardPaymentActivity() {
         val intent = Intent(requireContext(), CardPaymentActivity::class.java)
         startActivity(intent)
@@ -116,19 +98,5 @@ class PaymentOptionsDialogFragment(private val clearCartCallback: ClearCartCallb
     private fun showToast(message: String) {
         Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
     }
-
-
-
-
-//    private fun showAlert(message: String) {
-//        if (isAdded && activity != null) {
-//            AlertDialog.Builder(requireActivity())
-//                .setMessage(message)
-//                .setPositiveButton("OK") { dialog, _ -> dialog.dismiss() }
-//                .show()
-//        } else {
-//            Log.e("Alert", "Fragment is not added or activity is null.")
-//        }
-//    }
 
 }

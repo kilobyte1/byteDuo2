@@ -1,33 +1,25 @@
-package com.example.byteduo
+package com.example.byteduo.View
 
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
-import android.widget.Button
 import android.widget.EditText
 import android.widget.ListView
 import android.widget.TextView
+import androidx.fragment.app.Fragment
+import com.example.byteduo.Model.FirebaseDBManager
+import com.example.byteduo.Model.MenuItemsCategoriesProvider
+import com.example.byteduo.R
 import com.example.byteduo.View.items.BakeryFragment
 import com.example.byteduo.View.items.DrinksFragment
 import com.example.byteduo.View.items.HotCoffeeFragment
 import com.example.byteduo.View.items.HotTeasFragment
 import com.example.byteduo.View.items.IceTeasFragment
-import com.example.byteduo.adapter.MenuAdapter
-import com.example.byteduo.model.Admin
-import com.example.byteduo.model.Customer
-import com.example.byteduo.model.FirebaseDBManager
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
-
-
 
 class AdminHomeFragment : Fragment() {
 
@@ -35,8 +27,14 @@ class AdminHomeFragment : Fragment() {
     private lateinit var menuListView: ListView
     private lateinit var menuAdapter: MenuAdapter
 
-    private val menuItems = listOf("Hot Coffee","Ice Teas","Hot Teas", "Bakery", "Drinks")
-    private val fragments = listOf(HotCoffeeFragment(), IceTeasFragment(), HotTeasFragment(), BakeryFragment(), DrinksFragment())
+    private val menuItems = MenuItemsCategoriesProvider.menuItemsCategories
+    private val fragments = listOf(
+        HotCoffeeFragment(),
+        IceTeasFragment(),
+        HotTeasFragment(),
+        BakeryFragment(),
+        DrinksFragment()
+    )
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -131,7 +129,3 @@ class AdminHomeFragment : Fragment() {
     }
 
 }
-
-
-
-

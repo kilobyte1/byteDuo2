@@ -2,6 +2,7 @@ package com.example.byteduo.View
 
 import android.app.AlertDialog
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -9,15 +10,16 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
+import android.widget.RatingBar
 import android.widget.TextView
 import android.widget.Toast
-import androidx.navigation.fragment.findNavController
 import com.example.byteduo.Controller.AccountController
 import com.example.byteduo.Controller.Loading
+import com.example.byteduo.Controller.ReviewsController
 import com.example.byteduo.R
-import com.example.byteduo.model.Customer
-import com.example.byteduo.model.FirebaseDBManager
-import com.example.byteduo.model.FirebaseDBManager.getCurrentUserId
+import com.example.byteduo.Model.Customer
+import com.example.byteduo.Model.FirebaseDBManager
+import com.example.byteduo.Model.FirebaseDBManager.getCurrentUserId
 import com.google.firebase.auth.FirebaseAuth
 
 class AccountFragment : Fragment() {
@@ -27,6 +29,10 @@ class AccountFragment : Fragment() {
     private lateinit var btnChangePassword: Button
     private lateinit var btnLogout: Button
     private lateinit var btnChanEmail: Button
+    private lateinit var btnAddReview: Button
+
+
+    private val accountController = AccountController()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -47,6 +53,7 @@ class AccountFragment : Fragment() {
         btnChangePassword = view.findViewById(R.id.btnChangePassword)
         btnLogout = view.findViewById(R.id.btnLogout)
         btnChanEmail = view.findViewById(R.id.btnChangeEmail)
+        btnAddReview = view.findViewById(R.id.btnAddReview)
 
         //set profile name
         val userId = FirebaseAuth.getInstance().currentUser?.uid
@@ -61,7 +68,7 @@ class AccountFragment : Fragment() {
             // Fetch customer details using the AccountController
             if (userId != null) {
                 FirebaseDBManager.getCustomerInfo(userId) { customerDetails ->
-                    // Now, you have the customer details, open the dialog form
+                    // get details from the dialog box
                     showUpdateDetailsDialog(customerDetails)
                 }
             }
@@ -81,9 +88,55 @@ class AccountFragment : Fragment() {
             val accountController = AccountController()
             accountController.onLogout(requireContext())
         }
-
+        btnAddReview.setOnClickListener {
+            showReviewDialog()
+        }
 
         return view
+    }
+
+    private fun showReviewDialog() {
+        val dialogView = layoutInflater.inflate(R.layout.dialog_review, null)
+        val etReview = dialogView.findViewById<EditText>(R.id.etReview)
+        val ratingBar = dialogView.findViewById<RatingBar>(R.id.ratingBar)
+        val orderId = dialogView.findViewById<TextView>(R.id.tvOrderId)
+
+        val dialog = AlertDialog.Builder(requireContext())
+            .setTitle("Add Review")
+            .setView(dialogView)
+            .setPositiveButton("Submit") { _, _ ->
+                // Retrieve user input from the dialog and process
+                val reviewText = etReview.text.toString()
+                if (reviewText.isNotEmpty()) {
+                    // Process the review text
+                    val reviewsController = ReviewsController(requireContext())
+                    val customerId = getCurrentUserId()
+                    if (customerId != null) {
+                        FirebaseDBManager.getCustomerInfo(customerId) { customer ->
+                            requireActivity().runOnUiThread {
+                                val name = customer?.fullName
+
+                                if (name != null) {
+                                    val rating = ratingBar.rating
+                                    val orderId =orderId.text.toString().trim()
+                                    reviewsController.addReviewAndGenerateResponse(customerId, orderId,name, rating, reviewText)
+                                } else {
+                                    Log.d("Review", "Customer name not available")
+                                }
+                            }
+                        }
+                    } else {
+                        // Handle the case when the review is empty
+                        Toast.makeText(context, "Review cannot be empty", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
+            .setNegativeButton("Cancel") { dialog, _ ->
+                dialog.dismiss()
+            }
+            .create()
+
+        dialog.show()
     }
 
     private fun showChangeEmailDialog() {
@@ -91,7 +144,7 @@ class AccountFragment : Fragment() {
         val inflater = LayoutInflater.from(requireContext())
         val dialogView = inflater.inflate(R.layout.change_email_dialog, null)
 
-        // Initialize and set other views
+        // Initialise and set other views
         val newEmailEditText = dialogView.findViewById<EditText>(R.id.etNewEmail)
         val confirmNewEmailEditText = dialogView.findViewById<EditText>(R.id.etConfirmNewEmail)
 
@@ -118,7 +171,7 @@ class AccountFragment : Fragment() {
                     // Dismiss the Loading dialog when the update is complete
                     waitDialog.dismiss()
 
-                    // You can show a Toast message without dismissing the AlertDialog
+                    //show a Toast message without dismissing the AlertDialog
                     Toast.makeText(requireContext(), "A verification email has been sent...", Toast.LENGTH_SHORT).show()
                 } else {
                     // Show a Toast message without dismissing the AlertDialog
@@ -168,8 +221,6 @@ class AccountFragment : Fragment() {
             val updatedMobile = mobileEditText.text.toString()
             val updatedUsername = usernameEditText.text.toString()
 
-
-
             //commented out because it is not working
             // Show the Loading dialog
             //val waitDialog = Loading.showWaitDialog(requireContext())
@@ -195,50 +246,38 @@ class AccountFragment : Fragment() {
     }
 
     private fun showChangePasswordDialog() {
+
         val builder = AlertDialog.Builder(requireContext())
         val inflater = LayoutInflater.from(requireContext())
         val dialogView = inflater.inflate(R.layout.change_password_dialog, null)
 
-        // Initialize and set other views
+        // Initialise and set other views
         val newPasswordEditText = dialogView.findViewById<EditText>(R.id.etNewPassword)
         val confirmPasswordEditText = dialogView.findViewById<EditText>(R.id.etConfirmPassword)
 
         builder.setView(dialogView)
-        //builder.setTitle("Change Password")
+            .setPositiveButton("Change Password") { dialog, _ ->
+                val newPassword = newPasswordEditText.text.toString()
+                val confirmPassword = confirmPasswordEditText.text.toString()
 
-        // Positive button for changing password
-        builder.setPositiveButton("Change Password") { dialog, _ ->
+                accountController.changePassword(requireContext(), newPassword, confirmPassword) { success, errorMessage ->
+                    if (success) {
+                    } else {
+                        // Password change failed, handle the error
+                        Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_SHORT).show()
+                    }
+                }
 
-            val newPassword = newPasswordEditText.text.toString()
-            val confirmPassword = confirmPasswordEditText.text.toString()
-
-            // Validate passwords
-            if (newPassword.isNotEmpty() && confirmPassword.isNotEmpty() && newPassword == confirmPassword) {
-                // Passwords match, proceed with changing the password
-                // Show the Loading dialog
-                val waitDialog = Loading.showWaitDialog(requireContext())
-
-                // Call the function to change the password
-                val accountController = AccountController()
-                accountController.changePassword(requireContext(),newPassword)
-
-                waitDialog.dismiss()
-
-            } else {
-                // Passwords don't match
-                //Toast.makeText(this,"Passwords do not match")
+                dialog.dismiss()
             }
-
-            dialog.dismiss()
-        }
-
-        // Negative button for canceling
-        builder.setNegativeButton("Cancel") { dialog, _ ->
-            dialog.dismiss()
-        }
-
-        builder.show()
+            .setNegativeButton("Cancel") { dialog, _ ->
+                dialog.dismiss()
+            }
+            .show()
     }
+
+
+
 
 
 
@@ -248,6 +287,15 @@ class AccountFragment : Fragment() {
                 requireActivity().runOnUiThread {
                     val name = customer.fullName
                     txtGreeting.text = "Hi, $name"
+                }
+            }
+        }
+    }
+    private fun getCusName2(userId: String) {
+        FirebaseDBManager.getCustomerInfo(userId) { customer ->
+            if (customer != null) {
+                requireActivity().runOnUiThread {
+                    val name = customer.fullName
                 }
             }
         }

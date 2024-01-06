@@ -1,4 +1,4 @@
-package com.example.byteduo
+package com.example.byteduo.View
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -7,10 +7,8 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.byteduo.Controller.OrderHandler.Companion.retrieveAllOrders
-import com.example.byteduo.View.OrdersAdapter.OrdersAdapter
-import com.example.byteduo.adapter.ManageOrdersAdapter
-import com.example.byteduo.model.Order
+import com.example.byteduo.Controller.OrderHandler
+import com.example.byteduo.R
 
 class ManageOrders : Fragment() {
 
@@ -25,14 +23,11 @@ class ManageOrders : Fragment() {
 
         recyclerView = view.findViewById(R.id.recyclerViewManageOrders)
         recyclerView.layoutManager = LinearLayoutManager(context)
-
-            retrieveAllOrders(){orders ->
+        OrderHandler.retrieveAllOrders() { orders ->
             ordersAdapter = ManageOrdersAdapter(orders)
             recyclerView.adapter = ordersAdapter
 
         }
-
-
         return view
     }
 }

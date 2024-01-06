@@ -5,14 +5,12 @@ import android.content.Context
 import android.content.Intent
 import android.util.Log
 import android.widget.Toast
-import androidx.core.content.ContentProviderCompat.requireContext
-import com.example.byteduo.model.Admin
-import com.example.byteduo.model.Customer
-import com.example.byteduo.model.LogoutHandler
+import com.example.byteduo.Model.Admin
+import com.example.byteduo.Model.Customer
+import com.example.byteduo.Model.LogoutHandler
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 
@@ -60,7 +58,7 @@ class AccountController : LogoutHandler {
                         .addOnCompleteListener { task ->
                             if (task.isSuccessful) {
                                 // Customer details updated successfully in the database
-                                Toast.makeText(context, "Customer details updated successfully.", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(context, "Your details have been updated successfully.", Toast.LENGTH_SHORT).show()
                             } else {
                                 // Failed to update customer details in the database
                                 Toast.makeText(context, "Failed to update details", Toast.LENGTH_SHORT).show()
@@ -122,21 +120,47 @@ class AccountController : LogoutHandler {
         }
     }
 
-
-
-
-    fun changePassword(context: Context, newPassword: String) {
+    private val passwordRegex = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@\$!%*?&])[A-Za-z\\d@\$!%*?&]{8,}\$".toRegex()
+    fun changePassword(context: Context, newPassword: String, confirmPassword: String, callback: (success: Boolean, errorMessage: String?) -> Unit) {
+        // Validate passwords
+        if (newPassword.isEmpty() || confirmPassword.isEmpty()) {
+            callback.invoke(false, "Passwords cannot be empty.")
+            return
+        }
+        if (newPassword.length < 8 || confirmPassword.length < 8) {
+            callback.invoke(false, "Passwords must be at least 8 characters.")
+            return
+        }
+        if (!newPassword.matches(passwordRegex) || !confirmPassword.matches(passwordRegex)) {
+            callback.invoke(false, "Password must contain at least one lowercase letter, one uppercase letter, one digit, one special character, and be at least 8 characters long.")
+            return
+        }
+        if (newPassword != confirmPassword) {
+            callback.invoke(false, "Passwords do not match.")
+            return
+        }
+        // Proceed to change password
         val user = FirebaseAuth.getInstance().currentUser
 
-        user?.updatePassword(newPassword)
-            ?.addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    Toast.makeText(context, "Password changed successfully", Toast.LENGTH_SHORT).show()
-                } else {
-                    Toast.makeText(context, "Failed to change password. Re-login", Toast.LENGTH_SHORT).show()
+        if (user != null) {
+            user.updatePassword(newPassword)
+                .addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        // Password changed successfully
+                        callback.invoke(true, null)
+                        // Show a Toast message for success
+                        Toast.makeText(context, "Password changed successfully.", Toast.LENGTH_SHORT).show()
+                    } else {
+                        // Password change failed
+                        callback.invoke(false, "Password change failed. Please try again.")
+                    }
                 }
-            }
+        } else {
+            // User is not authenticated
+            callback.invoke(false, "You are not authenticated.")
+        }
     }
+
 
     fun updateEmail(newEmail: String) {
         val user = FirebaseAuth.getInstance().currentUser
@@ -153,6 +177,7 @@ class AccountController : LogoutHandler {
             }
         }
     }
+
 
     fun updateAdminEmail(newEmail: String) {
         val user = FirebaseAuth.getInstance().currentUser
@@ -187,17 +212,4 @@ class AccountController : LogoutHandler {
                 }
             }
     }
-
-
-
-
-//    fun getCurrentUserName(): String? {
-//        // Check if the user is signed in (not null)
-//        val user = FirebaseAuth.getInstance().currentUser
-//        return user?.displayName
-//    }
-
-
-
-
 }

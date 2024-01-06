@@ -22,7 +22,7 @@
         tools:layout="@layout/fragment_orders" />
     <fragment
         android:id="@+id/cartFragment2"
-        android:name="com.example.byteduo.CartFragment"
+        android:name="com.example.byteduo.View.CartFragment"
         android:label="fragment_cart"
         tools:layout="@layout/fragment_cart" />
 </navigation>

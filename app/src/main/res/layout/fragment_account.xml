@@ -15,6 +15,17 @@
         android:layout_marginTop="32dp"
         android:scaleType="centerCrop"/>
 
+    <Button
+        android:id="@+id/btnAddReview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/txtGreeting"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginEnd="32dp"
+        android:background="@drawable/rounded_btn"
+        android:text="Add Review"/>
+
     <TextView
         android:id="@+id/txtGreeting"
         android:layout_width="wrap_content"
@@ -28,7 +39,7 @@
         android:id="@+id/btnUpdateDetails"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/txtGreeting"
+        android:layout_below="@id/btnAddReview"
         android:layout_marginTop="24dp"
         android:layout_marginStart="32dp"
         android:layout_marginEnd="32dp"

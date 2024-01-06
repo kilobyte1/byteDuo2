@@ -80,17 +80,40 @@
         android:paddingBottom="30dp"
         android:layout_below="@+id/txtChangePassword" />
 
-    <Button
-        android:id="@+id/btnAddItem"
-        android:layout_width="129dp"
+    <LinearLayout
+        android:id="@+id/newLa"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/UpdateSection"
-        android:layout_marginStart="16dp"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="16dp"
-        android:layout_marginBottom="10dp"
-        android:background="@drawable/rounded_btn"
-        android:text="Add Menu Item" />
+        android:gravity="center">
+
+        <Button
+            android:id="@+id/btnAddItem"
+            android:layout_width="129dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="10dp"
+            android:background="@drawable/rounded_btn"
+            android:text="Add Menu Item" />
+
+        <Button
+            android:id="@+id/btnViewReviews"
+            android:layout_width="153dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/UpdateSection"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="10dp"
+            android:layout_toEndOf="@id/btnAddItem"
+            android:background="@drawable/rounded_btn"
+            android:text="Customer Reviews" />
+
+
+
+    </LinearLayout>
+
+
 
     <TextView
         android:id="@+id/note"
@@ -109,7 +132,7 @@
         android:layout_marginTop="20dp"
         android:gravity="center"
         android:layout_marginBottom="30dp"
-        android:layout_below="@+id/btnAddItem" />
+        android:layout_below="@+id/newLa" />
 
     <Spinner
         android:id="@+id/removeSpinner"
@@ -152,6 +175,7 @@
             android:background="@drawable/rounded_btn"
             android:text="Edit Item" />
     </LinearLayout>
+
 
 
 

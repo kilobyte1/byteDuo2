@@ -3,7 +3,6 @@ package com.example.byteduo.Controller
 import android.app.Dialog
 import android.content.Context
 import android.view.Window
-import com.example.byteduo.PaymentOptionsDialogFragment
 import com.example.byteduo.R
 
 class Loading {

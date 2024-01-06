@@ -1,43 +1,45 @@
 package com.example.byteduo.Controller
 
-import android.widget.Toast
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContentProviderCompat.requireContext
-import com.example.byteduo.Controller.OrderHandler.Companion.databaseReference
-import com.example.byteduo.model.CartItem
-import com.example.byteduo.model.FirebaseDBManager
-import com.example.byteduo.model.MenuItems
+import com.example.byteduo.Model.CartItem
+import com.example.byteduo.Model.FirebaseDBManager
+import com.example.byteduo.Model.MenuItems
+import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 
-class CartController: AppCompatActivity() {
+class CartController : AppCompatActivity() {
 
-    private fun handleAddToCart(menuItem: MenuItems, quantity: Int) {
+    private lateinit var databaseReference: DatabaseReference
+
+    init {
+        // Initialize the database reference in the constructor or init block
+        val userId = FirebaseDBManager.getCurrentUserId()
+        databaseReference = userId?.let {
+            FirebaseDatabase.getInstance().getReference("Cart").child(
+                it
+            )
+        }!!
+    }
+
+    fun handleAddToCart(menuItem: MenuItems, quantity: Int) {
         if (quantity > 0) {
-            // Create a CartItem object with the necessary details
             val cartItem = CartItem(
                 menuItem = menuItem,
                 quantity = quantity,
+                total = menuItem.itemPrice?.times(quantity) ?: 0.0
             )
-            // Store the cartItem in the database or perform other actions as needed
+
+            // Store the cartItem in the database
             storeCartItemInDatabase(cartItem)
-            Toast.makeText(this@CartController, "Item added", Toast.LENGTH_SHORT).show()
-
+            Log.d("AddingToCart", "created")
         } else {
-
-            // Show a toast message if quantity is zero
-            Toast.makeText(this@CartController, "Quantity cannot be 0", Toast.LENGTH_SHORT).show()
+            // Handle the case where quantity is zero
         }
     }
 
     private fun storeCartItemInDatabase(cartItem: CartItem) {
-
-        val userId = FirebaseDBManager.getCurrentUserId()
-
-        if (userId != null) {
-            databaseReference = FirebaseDatabase.getInstance().getReference("Cart").child(userId)
-
-            databaseReference.push().setValue(cartItem)
-
-        }
+        // Push the cartItem to the "Cart" node in the database
+        databaseReference.push().setValue(cartItem)
     }
 }

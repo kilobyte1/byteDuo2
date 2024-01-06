@@ -1,32 +1,30 @@
-package com.example.byteduo.adapter
+package com.example.byteduo.View
 
 import android.app.Activity
 import android.app.Dialog
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.EditText
-import androidx.fragment.app.DialogFragment
-import com.example.byteduo.R
-import android.provider.MediaStore
-import android.widget.ArrayAdapter
 import android.widget.ImageView
 import android.widget.Spinner
-import android.widget.TextView
 import android.widget.Toast
-import com.example.byteduo.model.MenuItems
-
+import androidx.fragment.app.DialogFragment
+import com.example.byteduo.R
+import com.example.byteduo.Model.MenuItems
+import com.example.byteduo.Model.MenuItemsCategoriesProvider
 
 class AddItemDialogFragment : DialogFragment() {
 
     private val PICK_IMAGE_REQUEST = 1
-
-    private val categories = listOf("Hot Coffee", "Ice Teas", "Hot Teas", "Bakery", "Drinks")
-
+    //add the items
+    private val categories = MenuItemsCategoriesProvider.menuItemsCategories
 
     //late init' allows initialising a not-null property
     private lateinit var itemNameEditText: EditText
@@ -59,7 +57,11 @@ class AddItemDialogFragment : DialogFragment() {
         val placeholder = "Select Category"
         val itemcategoriesWithPlaceholder = listOf(placeholder) + categories
         //using array adapter to add the categories to a simple spinner item
-        val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, itemcategoriesWithPlaceholder)
+        val adapter = ArrayAdapter(
+            requireContext(),
+            android.R.layout.simple_spinner_item,
+            itemcategoriesWithPlaceholder
+        )
         // Specify the layout to use when the list of choices appears
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
 
@@ -70,7 +72,8 @@ class AddItemDialogFragment : DialogFragment() {
         //ope the phone gallery to add an image
         btnAddImage.setOnClickListener {
             // Create an Intent to pick an image from the gallery
-            val galleryIntent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+            val galleryIntent =
+                Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
             startActivityForResult(galleryIntent, PICK_IMAGE_REQUEST)
         }
 

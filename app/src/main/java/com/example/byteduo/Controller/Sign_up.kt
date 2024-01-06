@@ -1,21 +1,22 @@
 package com.example.byteduo.Controller
 
+
 import android.app.Dialog
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.util.Patterns
 import android.view.View
-import android.view.Window
 import android.view.animation.AccelerateDecelerateInterpolator
 import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+
+import com.example.byteduo.Model.Customer
+import com.example.byteduo.Model.FirebaseDBManager
 import com.example.byteduo.R
-import com.example.byteduo.model.Customer
-import com.example.byteduo.model.FirebaseDBManager
 import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.FirebaseApp
 import com.google.firebase.auth.FirebaseAuth
@@ -23,14 +24,14 @@ import java.lang.Exception
 
 class Sign_up : AppCompatActivity() {
 
-    lateinit var fullNameInput: TextInputEditText
-    lateinit var  usernameInput: TextInputEditText
-    lateinit var emailInput: TextInputEditText
-    lateinit var passwordInput: TextInputEditText
-    lateinit var confirmPasswordInput: TextInputEditText
-    lateinit var mobileNumberInput: TextInputEditText
-    lateinit var btnRegister: Button
-    lateinit var mAuth: FirebaseAuth
+    private lateinit var fullNameInput: TextInputEditText
+    private lateinit var  usernameInput: TextInputEditText
+    private lateinit var emailInput: TextInputEditText
+    private lateinit var passwordInput: TextInputEditText
+    private lateinit var confirmPasswordInput: TextInputEditText
+    private lateinit var mobileNumberInput: TextInputEditText
+    private lateinit var btnRegister: Button
+    private lateinit var mAuth: FirebaseAuth
     lateinit var dialog: Dialog
 
 
@@ -233,4 +234,3 @@ class Sign_up : AppCompatActivity() {
     }
 
 }
-

@@ -1,4 +1,4 @@
-package com.example.byteduo.model
+package com.example.byteduo.Model
 
 data class Order(
     val orderId: String? = null,

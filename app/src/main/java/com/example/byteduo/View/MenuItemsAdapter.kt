@@ -1,7 +1,6 @@
-package com.example.byteduo.adapter
+package com.example.byteduo.View
 
 import android.content.Context
-import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,8 +9,9 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.example.byteduo.Model.ImageLoaderUtil
 import com.example.byteduo.R
-import com.example.byteduo.model.MenuItems
+import com.example.byteduo.Model.MenuItems
 
 class MenuItemsAdapter(
     private val onAddClickListener: (MenuItems, itemCount: Int) -> Unit,
@@ -26,7 +26,8 @@ class MenuItemsAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.activity_menu_item_view, parent, false)
+        val view = LayoutInflater.from(parent.context)
+            .inflate(R.layout.activity_menu_item_view, parent, false)
         return ViewHolder(view, items, onAddClickListener, onUpdateCartListener)
 
     }
@@ -63,7 +64,7 @@ class MenuItemsAdapter(
 
         private var itemCount: Int = 0
 
-        //expose the item count
+
         fun getItemCount(): Int {
             return itemCount
         }
@@ -72,7 +73,6 @@ class MenuItemsAdapter(
             // Set click listener for the btnAdd
             btnAdd.setOnClickListener {
                 onAddClickListener.invoke(items[adapterPosition], itemCount)
-                onUpdateCartListener.invoke()
             }
 
 
@@ -103,23 +103,12 @@ class MenuItemsAdapter(
         fun bind(menuItem: MenuItems) {
             val itemImageUrl = menuItem.itemImage
             if (itemImageUrl != null) {
-                loadRoundedImage(itemImageUrl, itemImageView, itemView.context)
+                ImageLoaderUtil.loadRoundedImage(itemImageUrl, itemImageView, itemView.context)
             }
             itemNameTextView.text = menuItem.itemName
             itemPriceTextView.text = String.format("£%.2f", menuItem.itemPrice)
             itemDescription.text = menuItem.description
         }
 
-        private fun loadRoundedImage(itemImageUrl: String, itemImageView: ImageView, context: Context) {
-            Glide.with(context)
-                .load(itemImageUrl)
-                .circleCrop()
-                .into(itemImageView)
-        }
-
-
     }
-
-
-
 }
