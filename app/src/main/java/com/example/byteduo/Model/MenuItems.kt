@@ -46,6 +46,9 @@ data class MenuItems(
             return arrayOfNulls(size)
         }
     }
+//    fun getItemId(): String? {
+//        return this.itemId
+//    }
     fun addItem(menuItem: MenuItems) {
         val databaseReference = FirebaseDatabase.getInstance().getReference("MenuItems")
         val newItemReference = databaseReference.push()

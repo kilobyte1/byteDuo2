@@ -72,8 +72,12 @@ class OrderHandler {
                         saveOrderToDatabase(order)
 
                         // Create OrderDetails object
+                        val allMenuItemIds: String = cartItems.mapNotNull { it.menuItem?.itemId }.joinToString(", ")
+
+                        // Create a single OrderDetails object with the concatenated menuItemIds
                         val orderDetails = OrderDetails(
                             orderId = orderId,
+                            menuItemId = allMenuItemIds
                         )
 
                         // Save the order details to the database
@@ -137,17 +141,21 @@ class OrderHandler {
 
 
         private fun saveOrderDetailsToDatabase(orderDetails: OrderDetails) {
-            val orderDetailsReference = FirebaseDatabase.getInstance().getReference("OrderDetails")
-                .child(orderDetails.orderId)
+            val orderDetailsReference = orderDetails.orderId?.let {
+                FirebaseDatabase.getInstance().getReference("OrderDetails")
+                    .child(it)
+            }
 
-            orderDetailsReference.setValue(orderDetails)
-                .addOnCompleteListener { task ->
-                    if (task.isSuccessful) {
-                        // Order details saved successfully
-                    } else {
-                        // Error occurred while saving the order details
+            if (orderDetailsReference != null) {
+                orderDetailsReference.setValue(orderDetails)
+                    .addOnCompleteListener { task ->
+                        if (task.isSuccessful) {
+                            // Order details saved successfully
+                        } else {
+                            // Error occurred while saving the order details
+                        }
                     }
-                }
+            }
         }
 
 

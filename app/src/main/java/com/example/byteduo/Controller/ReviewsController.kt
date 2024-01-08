@@ -30,6 +30,7 @@ class ReviewsController(private val context: Context) {
             }
     }
 
+
     private fun generateResponse(reviewRating: Float, reviewText: String) {
         val responseHeader = "Thank you for your feedback!"
 

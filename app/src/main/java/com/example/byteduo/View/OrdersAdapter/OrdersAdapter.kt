@@ -8,6 +8,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.byteduo.R
 import com.example.byteduo.Model.Order
+import kotlin.math.roundToInt
 
 class OrdersAdapter(private val orders: List<Order>) : RecyclerView.Adapter<OrdersAdapter.OrderViewHolder>() {
 
@@ -42,7 +43,8 @@ class OrdersAdapter(private val orders: List<Order>) : RecyclerView.Adapter<Orde
             quantity * price
         } ?: 0.0
 
-        holder.totalCost.text = "Total: £$total"
+        val formattedTotal = String.format("%.2f", total)
+        holder.totalCost.text = "Total: £$formattedTotal"
 
         val itemsNameAndQtyString = currentOrder.orderItems?.joinToString("\n") { cartItem ->
             "Item: ${cartItem.menuItem?.itemName} - Qty: ${cartItem.quantity} - Price: £${cartItem.total}"

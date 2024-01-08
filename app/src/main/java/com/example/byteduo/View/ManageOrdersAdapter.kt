@@ -103,7 +103,8 @@ class ManageOrdersAdapter(private val ordersList: List<Order>) :
             quantity * price
         } ?: 0.0
 
-        holder.totalCost.text = "Total: £$total"
+        val formattedTotal = String.format("%.2f", total)
+        holder.totalCost.text = "Total: £$formattedTotal"
 
 
     }

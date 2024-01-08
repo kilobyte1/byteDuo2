@@ -11,6 +11,5 @@ data class Customer(
     //not storing password as this is not safe// firebase handles the hashing
 
 ){
-    // Ensure you have a default constructor
     constructor() : this("", /* other default values */)
 }

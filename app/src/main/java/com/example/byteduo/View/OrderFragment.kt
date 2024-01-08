@@ -40,19 +40,24 @@ class OrderFragment : Fragment() {
         val userId = FirebaseAuth.getInstance().currentUser?.uid
         if (userId != null) {
             retrieveOrdersForUser(userId) { orders ->
-                // Initialize and set the adapter with the retrieved orders
+                // Initialise and set the adapter with the retrieved orders
                 ordersAdapter = OrdersAdapter(orders)
                 recyclerView.adapter = ordersAdapter
 
                 if (orders.isNotEmpty() && orders.last().orderStatus == "Collected") {
                     val mostRecentOrder = orders.last()
-                    // Check if the review dialog has been shown for this specific order
-                    //dialog should only show when last order has been collected
+
                     if (!mostRecentOrder.orderId?.let { isReviewDialogShown(it) }!!) {
-                        mostRecentOrder.orderId?.let { showReviewDialog(it) }
-                        mostRecentOrder.orderId?.let { markReviewDialogAsShown(it) }
+                        Log.d("OrderFragment", "Showing review dialog for order: ${mostRecentOrder.orderId}")
+                        mostRecentOrder.orderId?.let {
+                            showReviewDialog(it)
+                            markReviewDialogAsShown(it)
+                        }
+                    } else {
+                        Log.d("OrderFragment", "Review dialog already shown for order: ${mostRecentOrder.orderId}")
                     }
                 }
+
             }
         }
         return view
@@ -62,7 +67,7 @@ class OrderFragment : Fragment() {
         val dialogView = layoutInflater.inflate(R.layout.dialog_review_default_orderid, null)
         val etReview = dialogView.findViewById<EditText>(R.id.etReview)
         val ratingBar = dialogView.findViewById<RatingBar>(R.id.ratingBar)
-        Log.d("OrderFragment", "Showing review dialog for order: $orderId")
+        Log.d("Review", "Showing review dialog for order: $orderId")
 
         val dialog = AlertDialog.Builder(requireContext())
             .setTitle("Review")
@@ -74,40 +79,39 @@ class OrderFragment : Fragment() {
                 if (reviewText.isNotEmpty()) {
                     // Process the review text
                     val reviewsController = ReviewsController(requireContext())
-                    val customerId = getCurrentUserId()
+                    val userId = getCurrentUserId()
 
-                    if (customerId != null) {
-                        FirebaseDBManager.getCustomerInfo(customerId) { customer ->
+                    if (userId != null) {
+                        FirebaseDBManager.getCustomerInfo(userId) { customer ->
                             requireActivity().runOnUiThread {
                                 val name = customer?.fullName
+
                                 if (name != null) {
+                                    // User is a customer
                                     val rating = ratingBar.rating
-                                    reviewsController.addReviewAndGenerateResponse(customerId, orderId,name, rating, reviewText)
+                                    reviewsController.addReviewAndGenerateResponse(userId, orderId, name, rating, reviewText)
                                 } else {
-                                    Log.d("Review", "Customer name not available")
+                                    // Customer name is null, check if admin
+                                    FirebaseDBManager.getAdminInfo(userId) { admin ->
+                                        requireActivity().runOnUiThread {
+                                            val adminName = admin?.fullName
+
+                                            if (adminName != null) {
+                                                // User is an admin
+                                                val rating = ratingBar.rating
+                                                reviewsController.addReviewAndGenerateResponse(userId, orderId, adminName, rating, reviewText)
+                                                Log.d("Review", "Admin review added successfully")
+                                            } else {
+                                                // Admin name not available
+                                                Log.d("Review", "Admin name not available")
+                                            }
+                                        }
+                                    }
                                 }
                             }
                         }
                     } else {
-                        // If not a customer, fetch admin information
-                        val adminId = getCurrentUserId()
-                        if (adminId != null) {
-                            FirebaseDBManager.getAdminInfo(adminId) { admin ->
-                                requireActivity().runOnUiThread {
-                                    val name = admin?.fullName
-
-                                    if (name != null) {
-                                        val rating = ratingBar.rating
-                                        reviewsController.addReviewAndGenerateResponse(adminId,orderId, name, rating, reviewText)
-                                    } else {
-                                        Log.d("Review", "Admin name not available")
-                                    }
-                                }
-                            }
-                        } else {
-                            // Handle the case when both customer and admin IDs are null
-                            Log.d("Review", "Customer and Admin IDs are null")
-                        }
+                        Log.d("Review", "Customer and Admin IDs are null")
                     }
                 }
             }
